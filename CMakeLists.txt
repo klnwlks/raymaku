@@ -20,6 +20,7 @@ FetchContent_MakeAvailable(raylib)
 
 # Our Project
 add_executable(${PROJECT_NAME})
+target_include_directories(${PROJECT_NAME} PRIVATE src)
 add_subdirectory(src)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

@@ -31,7 +31,6 @@
 //----------------------------------------------------------------------------------
 static int framesCounter = 0;
 static int finishScreen = 0;
-static unsigned long int score = 0;
 static bool levelPaused = false;
 
 //----------------------------------------------------------------------------------
@@ -44,13 +43,13 @@ void InitGameplayScreen(void)
     // TODO: Initialize GAMEPLAY screen variables here!
     framesCounter = 0;
     finishScreen = 0;
-    score = 0;
     levelPaused = false;
 }
 
 // Gameplay Screen Update logic
 void UpdateGameplayScreen(void)
 {
+    framesCounter++;
     if (IsKeyPressed(KEY_P)) levelPaused = !levelPaused;
 
     // if guard
