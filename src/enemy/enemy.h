@@ -11,6 +11,7 @@ typedef struct {
     PatternConfig config;
     float shootTimer; // delay between shots 
     float radius;
+    float currentShootTimer;
     // TODO: add support for loading textures
 } Enemy;
 

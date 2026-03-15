@@ -1,5 +1,4 @@
 #include "enemy.h"
-#include <math.h>
 #include "../config.h"
 
 #define MAX_ENEMY_COUNT 100
@@ -21,10 +20,12 @@ void UpdateEnemyPool()
         enemies[i].position.x += enemies[i].velocity.x * dt;
         enemies[i].position.y += enemies[i].velocity.y * dt;
 
-// shoot 
-        if (fmodf(dt, enemies[i].shootTimer) == 0)
+        // shoot 
+        enemies[i].currentShootTimer -= dt;
+        if (enemies[i].currentShootTimer <= 0.0f)
         {
             ExecPattern(enemies[i].position, enemies[i].config, BULLET_ENEMY); 
+            enemies[i].currentShootTimer = enemies[i].shootTimer;
         }
 
         // update if out of bounds / destroyed
@@ -53,13 +54,17 @@ void DrawEnemyPool()
 
 void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius)
 {
-    enemies[enemyCount].position = pos;
-    enemies[enemyCount].velocity = vel;
-    enemies[enemyCount].health = health;
-    enemies[enemyCount].shootTimer = shootTimer;
-    enemies[enemyCount].config = pattern;
-    enemies[enemyCount].radius = radius;
-    enemyCount++;
+    if (enemyCount <= MAX_ENEMY_COUNT)
+    {
+        enemies[enemyCount].position = pos;
+        enemies[enemyCount].velocity = vel;
+        enemies[enemyCount].health = health;
+        enemies[enemyCount].shootTimer = shootTimer;
+        enemies[enemyCount].config = pattern;
+        enemies[enemyCount].radius = radius;
+        enemies[enemyCount].currentShootTimer = shootTimer;
+        enemyCount++;
+    }
 }
 
 void EnemyHit(int index, int power) {
