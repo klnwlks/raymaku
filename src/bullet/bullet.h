@@ -25,5 +25,6 @@ void DrawBulletPools(void);
 
 // Spawning
 void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel,int power, BulletOwner owner);
+int *GetBulletPool(Bullet *pool, BulletOwner owner);
 
 #endif
