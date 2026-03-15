@@ -64,8 +64,8 @@ void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, flo
 
 
 // RETURNS THE MEMORY ADDRESS OF ENEMY COUNT, AND SETS A POINTER TO HAVE THE SAME ADDRESS OF ENEMIES
-int *GetEnemies(Enemy *pool) 
+Enemy *GetEnemies(int *count) 
 {
-    pool = enemies;
-    return &enemyCount;
+    count = &enemyCount;
+    return enemies;
 }

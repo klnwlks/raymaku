@@ -18,6 +18,6 @@ void InitEnemyPool(void);
 void UpdateEnemyPool(void);
 void DrawEnemyPool(void);
 void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius);
-int *GetEnemies(Enemy *pool);
+Enemy *GetEnemies(int* count);
 
 #endif

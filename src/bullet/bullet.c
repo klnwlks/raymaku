@@ -98,14 +98,14 @@ void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner
     }
 }
 
-int *GetBulletPool(Bullet *pool, BulletOwner owner) {
+Bullet *GetBulletPool(int *count, BulletOwner owner) {
     if (owner == BULLET_ENEMY) 
     {
-        pool = enemyBullets;
-        return &enemyBulletCount;
+        count = &enemyBulletCount;
+        return enemyBullets;
     }
     else {
-        pool = playerBullets;
-        return &playerBulletCount;
+        count = &playerBulletCount;
+        return playerBullets;
     }
 }
