@@ -1,5 +1,6 @@
 #include "bullet.h"
 #include "raylib.h"
+#include "../config.h"
 #include <stdbool.h>
 
 #define MAX_PLAYER_BULLETS 500

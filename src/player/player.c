@@ -13,7 +13,7 @@ void InitPlayer()
     player.radius = 10.0f;
     player.lives = 3;
     player.bombs = 5;
-    player.iSeconds = 2;
+    player.iFrame = 2;
     player.shooting = false;
     
 }
