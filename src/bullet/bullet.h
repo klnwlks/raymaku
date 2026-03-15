@@ -15,6 +15,7 @@ typedef struct {
     Vector2 velocity;
     Vector2 acceleration;
     float radius;
+    int power;
 } Bullet;
 
 // Lifecycle functions
@@ -23,6 +24,6 @@ void UpdateBulletPools(void);
 void DrawBulletPools(void);
 
 // Spawning
-void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, BulletOwner owner);
+void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel,int power, BulletOwner owner);
 
 #endif

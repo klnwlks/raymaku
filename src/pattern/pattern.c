@@ -8,8 +8,8 @@
 // this will execute the pattern
 void ExecPattern(Vector2 pos, PatternConfig pat, BulletOwner owner)
 {
-    // get "arc" (how spread out or bullet will be) into radians
-    float rad = pat.arc * (M_PI / 180);
+    // get "arc" (how spread out or bullet will be) 
+    float rad = pat.arc;
     // get the starting angle of out shot
     float startAngle = pat.angleOffset - (rad / 2.0f);
     // step is the degree between shots
@@ -37,7 +37,7 @@ void ExecPattern(Vector2 pos, PatternConfig pat, BulletOwner owner)
             };
           
             // spawn the bullet
-            SpawnBullet(pos, velocity, (Vector2){0,0}, owner);
+            SpawnBullet(pos, velocity, (Vector2){0,0}, pat.power,  owner);
         }
         i++;
     }

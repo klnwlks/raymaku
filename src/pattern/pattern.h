@@ -7,10 +7,11 @@
 typedef struct {
     int bulletCount; // how many bullets in one shot
     float speed;
-    int arc; // NOTE IN DEGREES
+    int arc; // in rad
     int angleOffset; // starting direction
     int spin; // if it will spin
     int shots; // how many times we shoot
+    int power;
     float delay; // delay between shots
 } PatternConfig;
 

@@ -71,7 +71,7 @@ void DrawBulletPools(void)
     }
 }
 
-void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, BulletOwner owner)
+void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner owner)
 {
     if (owner == BULLET_PLAYER)
     {
@@ -81,6 +81,7 @@ void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, BulletOwner owner)
             playerBullets[playerBulletCount].velocity = vel;
             playerBullets[playerBulletCount].acceleration = accel;
             playerBullets[playerBulletCount].radius = 4.0f;
+            playerBullets[playerBulletCount].power = power;
             playerBulletCount++;
         }
     }
@@ -92,6 +93,7 @@ void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, BulletOwner owner)
             enemyBullets[enemyBulletCount].velocity = vel;
             enemyBullets[enemyBulletCount].acceleration = accel;
             enemyBullets[enemyBulletCount].radius = 6.0f;
+            enemyBullets[enemyBulletCount].power = 1;
             enemyBulletCount++;
         }
     }
