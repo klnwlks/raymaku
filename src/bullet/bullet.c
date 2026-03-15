@@ -20,7 +20,7 @@ void InitBulletPools(void)
 }
 
 // Internal helper for updating and swapping
-static void UpdateBulletArray(Bullet *bullets, int *count, int max)
+static void UpdateBulletArray(Bullet *bullets, int *count)
 {
     float dt = GetFrameTime();
     
@@ -51,8 +51,8 @@ static void UpdateBulletArray(Bullet *bullets, int *count, int max)
 
 void UpdateBulletPools(void)
 {
-    UpdateBulletArray(playerBullets, &playerBulletCount, MAX_PLAYER_BULLETS);
-    UpdateBulletArray(enemyBullets, &enemyBulletCount, MAX_ENEMY_BULLETS);
+    UpdateBulletArray(playerBullets, &playerBulletCount);
+    UpdateBulletArray(enemyBullets, &enemyBulletCount);
 }
 
 void DrawBulletPools(void)
