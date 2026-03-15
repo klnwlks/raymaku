@@ -39,8 +39,8 @@ void UpdatePlayer()
     }
 
     // check if player is within playing boundary
-    player.position.x = Clamp(player.position.x, 0.0f, PLAY_AREA_WIDTH);
-    player.position.y = Clamp(player.position.y, 0.0f, PLAY_AREA_HEIGHT);
+    player.position.x = Clamp(player.position.x, player.radius, PLAY_AREA_WIDTH - player.radius);
+    player.position.y = Clamp(player.position.y, player.radius, PLAY_AREA_HEIGHT - player.radius);
 
     // TODO: ADD CHECKS FOR SHOOTING, THEN UPDATE ACCORDINGLY
 }
