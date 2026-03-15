@@ -46,7 +46,7 @@ void DrawEnemyPool()
 {
     for (int i = 0; i < enemyCount; i++)
     {
-        DrawCircleV(enemies[i].position, enemies[i].radius, RED);
+        DrawCircle(enemies[i].position.x + PLAY_AREA_X_OFFSET, enemies[i].position.y + PLAY_AREA_Y_OFFSET, enemies[i].radius, RED);
     }
 
 }

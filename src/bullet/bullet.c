@@ -60,13 +60,13 @@ void DrawBulletPools(void)
     // Draw Player Bullets (Blue)
     for (int i = 0; i < playerBulletCount; i++)
     {
-        DrawCircleV(playerBullets[i].position, playerBullets[i].radius, SKYBLUE);
+        DrawCircle(playerBullets[i].position.x + PLAY_AREA_X_OFFSET, playerBullets[i].position.y + PLAY_AREA_Y_OFFSET, playerBullets[i].radius, SKYBLUE);
     }
 
     // Draw Enemy Bullets (Red)
     for (int i = 0; i < enemyBulletCount; i++)
     {
-        DrawCircleV(enemyBullets[i].position, enemyBullets[i].radius, RED);
+        DrawCircle(enemyBullets[i].position.x + PLAY_AREA_X_OFFSET, enemyBullets[i].position.y + PLAY_AREA_Y_OFFSET, enemyBullets[i].radius, RED);
     }
 }
 

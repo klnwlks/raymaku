@@ -57,6 +57,11 @@ void DrawPlayer()
 
 }
 
+void PlayerHit()
+{
+
+}
+
 void UnloadPlayer() 
 {
 
