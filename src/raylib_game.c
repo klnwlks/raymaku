@@ -23,7 +23,8 @@
 // Shared Variables Definition (global)
 // NOTE: Those variables are shared between modules through screens.h
 //----------------------------------------------------------------------------------
-GameScreen currentScreen = LOGO;
+// NOTE: FOR DEVELOPMENT I HAVE DISABLED THE LOGO
+GameScreen currentScreen = TITLE;
 Font font = { 0 };
 Music music = { 0 };
 Sound fxCoin = { 0 };
@@ -31,8 +32,8 @@ Sound fxCoin = { 0 };
 //----------------------------------------------------------------------------------
 // Global Variables Definition (local to this module)
 //----------------------------------------------------------------------------------
-static const int screenWidth = 800;
-static const int screenHeight = 450;
+static const int screenWidth = 1024;
+static const int screenHeight = 768;
 
 // Required variables to manage screen transitions (fade-in, fade-out)
 static float transAlpha = 0.0f;
@@ -72,7 +73,7 @@ int main(void)
     PlayMusicStream(music);
 
     // Setup and init first screen
-    currentScreen = LOGO;
+    currentScreen = TITLE;
     InitLogoScreen();
 
 #if defined(PLATFORM_WEB)

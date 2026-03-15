@@ -31,6 +31,8 @@
 //----------------------------------------------------------------------------------
 static int framesCounter = 0;
 static int finishScreen = 0;
+static unsigned long int score = 0;
+static bool levelPaused = false;
 
 //----------------------------------------------------------------------------------
 // Gameplay Screen Functions Definition
@@ -42,12 +44,20 @@ void InitGameplayScreen(void)
     // TODO: Initialize GAMEPLAY screen variables here!
     framesCounter = 0;
     finishScreen = 0;
+    score = 0;
+    levelPaused = false;
 }
 
 // Gameplay Screen Update logic
 void UpdateGameplayScreen(void)
 {
+    if (IsKeyPressed(KEY_P)) levelPaused = !levelPaused;
+
+    // if guard
+    if (levelPaused) return;
+
     // TODO: Update GAMEPLAY screen variables here!
+    // NOTE: to streamline development, we will use relative positions inside the rectangle square to streamline thinigs
 
     // Press enter or tap to change to ENDING screen
     if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
@@ -62,9 +72,18 @@ void DrawGameplayScreen(void)
 {
     // TODO: Draw GAMEPLAY screen here!
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), PURPLE);
-    Vector2 pos = { 20, 10 };
-    DrawTextEx(font, "GAMEPLAY SCREEN", pos, font.baseSize*3.0f, 4, MAROON);
-    DrawText("PRESS ENTER or TAP to JUMP to ENDING SCREEN", 130, 220, 20, MAROON);
+    
+    // main play area
+    DrawRectangle(20, 20, 400, GetScreenHeight() - 40, WHITE);
+    DrawRectangleLines(20, 20, 400, GetScreenHeight() - 40, BLACK);
+    
+    DrawText(TextFormat("%020lu", score), 40, 20, 40, BLACK);
+
+    if (levelPaused)
+    {
+        DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), Fade(BLACK, 0.5f));
+        DrawText("PAUSED", GetScreenWidth()/2 - MeasureText("PAUSED", 40)/2, GetScreenHeight()/2 - 40, 40, WHITE);
+    }
 }
 
 // Gameplay Screen Unload logic
