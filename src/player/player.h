@@ -23,5 +23,6 @@ void UpdatePlayer(void);
 void DrawPlayer(void);
 void UnloadPlayer(void);
 Player *GetPlayer(void);
+void PlayerHit(void);
 
 #endif

@@ -70,6 +70,6 @@ void EnemyHit(int index, int power) {
 // RETURNS THE MEMORY ADDRESS OF ENEMY COUNT, AND SETS A POINTER TO HAVE THE SAME ADDRESS OF ENEMIES
 Enemy *GetEnemies(int *count) 
 {
-    count = &enemyCount;
+    *count = enemyCount;
     return enemies;
 }

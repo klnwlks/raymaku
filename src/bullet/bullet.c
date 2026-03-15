@@ -117,11 +117,11 @@ void RemoveBullet(int index, BulletOwner owner)
 Bullet *GetBulletPool(int *count, BulletOwner owner) {
     if (owner == BULLET_ENEMY) 
     {
-        count = &enemyBulletCount;
+        *count = enemyBulletCount;
         return enemyBullets;
     }
     else {
-        count = &playerBulletCount;
+        *count = playerBulletCount;
         return playerBullets;
     }
 }

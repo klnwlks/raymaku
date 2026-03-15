@@ -59,7 +59,8 @@ void DrawPlayer()
 
 void PlayerHit()
 {
-
+    // TODO: ADD IFRAMES AND ETC 
+    player.lives--;
 }
 
 void UnloadPlayer() 
