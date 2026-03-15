@@ -12,6 +12,8 @@ typedef struct {
     int bombs;
     int power;
     float radius; // hitbox
+    int points;
+    int iframes;
     bool shooting;
 } Player;
 
@@ -20,5 +22,6 @@ void InitPlayer(void);
 void UpdatePlayer(void);
 void DrawPlayer(void);
 void UnloadPlayer(void);
+Player *GetPlayer(void);
 
 #endif
