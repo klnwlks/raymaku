@@ -98,6 +98,22 @@ void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner
     }
 }
 
+void RemoveBullet(int index, BulletOwner owner)
+{
+    if (owner == BULLET_ENEMY) 
+    {
+        enemyBullets[index] = enemyBullets[enemyBulletCount - 1];
+        enemyBulletCount--;
+    }
+    else 
+    {
+        playerBullets[index] = playerBullets[playerBulletCount - 1];
+        playerBulletCount--;
+
+    }
+}
+
+
 Bullet *GetBulletPool(int *count, BulletOwner owner) {
     if (owner == BULLET_ENEMY) 
     {

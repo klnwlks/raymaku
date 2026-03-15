@@ -62,6 +62,10 @@ void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, flo
     enemyCount++;
 }
 
+void EnemyHit(int index, int power) {
+    enemies[index].health -= power;
+}
+
 
 // RETURNS THE MEMORY ADDRESS OF ENEMY COUNT, AND SETS A POINTER TO HAVE THE SAME ADDRESS OF ENEMIES
 Enemy *GetEnemies(int *count) 
