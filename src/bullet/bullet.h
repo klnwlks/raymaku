@@ -3,10 +3,26 @@
 
 #include "raylib.h"
 
+// Bullet owner types
+typedef enum {
+    BULLET_PLAYER,
+    BULLET_ENEMY
+} BulletOwner;
+
+// Optimized Bullet structure (no active flag needed with swapping)
 typedef struct {
-    Vector2 initposition;
-    Vector2 speed;
+    Vector2 position;
+    Vector2 velocity;
+    Vector2 acceleration;
     float radius;
 } Bullet;
+
+// Lifecycle functions
+void InitBulletPools(void);
+void UpdateBulletPools(void);
+void DrawBulletPools(void);
+
+// Spawning
+void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, BulletOwner owner);
 
 #endif
