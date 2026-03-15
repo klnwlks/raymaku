@@ -31,6 +31,7 @@
 //----------------------------------------------------------------------------------
 static int framesCounter = 0;
 static int finishScreen = 0;
+static int menuSelected = 0;    // 0: START, 1: OPTIONS
 
 //----------------------------------------------------------------------------------
 // Title Screen Functions Definition
@@ -42,18 +43,30 @@ void InitTitleScreen(void)
     // TODO: Initialize TITLE screen variables here!
     framesCounter = 0;
     finishScreen = 0;
+    menuSelected = 0;
 }
 
 // Title Screen Update logic
 void UpdateTitleScreen(void)
 {
     // TODO: Update TITLE screen variables here!
+    if (IsKeyPressed(KEY_DOWN))
+    {
+        menuSelected++;
+        if (menuSelected > 1) menuSelected = 0;
+    }
+    else if (IsKeyPressed(KEY_UP))
+    {
+        menuSelected--;
+        if (menuSelected < 0) menuSelected = 1;
+    }
 
     // Press enter or tap to change to GAMEPLAY screen
     if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
     {
-        //finishScreen = 1;   // OPTIONS
-        finishScreen = 2;   // GAMEPLAY
+        if (menuSelected == 0) finishScreen = 2;   // GAMEPLAY
+        else finishScreen = 1;                     // OPTIONS
+
         PlaySound(fxCoin);
     }
 }
@@ -65,7 +78,14 @@ void DrawTitleScreen(void)
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), GREEN);
     Vector2 pos = { 20, 10 };
     DrawTextEx(font, "TITLE SCREEN", pos, font.baseSize*3.0f, 4, DARKGREEN);
-    DrawText("PRESS ENTER or TAP to JUMP to GAMEPLAY SCREEN", 120, 220, 20, DARKGREEN);
+
+    if (menuSelected == 0) DrawText("-> START GAME", 120, 220, 20, MAROON);
+    else DrawText("   START GAME", 120, 220, 20, DARKGREEN);
+
+    if (menuSelected == 1) DrawText("-> OPTIONS", 120, 250, 20, MAROON);
+    else DrawText("   OPTIONS", 120, 250, 20, DARKGREEN);
+
+    DrawText("USE UP/DOWN KEYS and ENTER", 120, 320, 10, DARKGREEN);
 }
 
 // Title Screen Unload logic
