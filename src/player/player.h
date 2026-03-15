@@ -13,7 +13,7 @@ typedef struct {
     int power;
     float radius; // hitbox
     int points;
-    int iframes;
+    int iSeconds;
     bool shooting;
 } Player;
 

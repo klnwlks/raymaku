@@ -25,6 +25,8 @@
 
 #include "raylib.h"
 #include "screens.h"
+#include "config.h"
+#include "player/player.h"
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
@@ -44,6 +46,7 @@ void InitGameplayScreen(void)
     framesCounter = 0;
     finishScreen = 0;
     levelPaused = false;
+    InitPlayer();
 }
 
 // Gameplay Screen Update logic
@@ -54,6 +57,8 @@ void UpdateGameplayScreen(void)
 
     // if guard
     if (levelPaused) return;
+
+    UpdatePlayer();
 
     // TODO: Update GAMEPLAY screen variables here!
     // NOTE: to streamline development, we will use relative positions inside the rectangle square to streamline thinigs
@@ -73,10 +78,12 @@ void DrawGameplayScreen(void)
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), PURPLE);
     
     // main play area
-    DrawRectangle(20, 20, 400, GetScreenHeight() - 40, WHITE);
-    DrawRectangleLines(20, 20, 400, GetScreenHeight() - 40, BLACK);
+    DrawRectangle(PLAY_AREA_X_OFFSET, PLAY_AREA_Y_OFFSET, PLAY_AREA_WIDTH, PLAY_AREA_HEIGHT, WHITE);
+    DrawRectangleLines(PLAY_AREA_X_OFFSET, PLAY_AREA_Y_OFFSET, PLAY_AREA_WIDTH, PLAY_AREA_HEIGHT, BLACK);
+
+    DrawPlayer();
     
-    DrawText(TextFormat("%020lu", score), 40, 20, 40, BLACK);
+    // DrawText(TextFormat("%020lu", score), 40, 20, 40, BLACK);
 
     if (levelPaused)
     {
@@ -89,6 +96,7 @@ void DrawGameplayScreen(void)
 void UnloadGameplayScreen(void)
 {
     // TODO: Unload GAMEPLAY screen variables here!
+    UnloadPlayer();
 }
 
 // Gameplay Screen should finish?
