@@ -1,5 +1,6 @@
 #include "enemy.h"
 #include "../config.h"
+#include "raymath.h"
 
 #define MAX_ENEMY_COUNT 100
 
@@ -16,7 +17,8 @@ void UpdateEnemyPool()
     float dt = GetFrameTime();
     for (int i = 0; i < enemyCount; i++)
     {
-       // update position of enemies
+         // update position of enemies
+        enemies[i].velocity = Vector2Rotate(enemies[i].velocity, enemies[i].angularVelocity * dt); 
         enemies[i].position.x += enemies[i].velocity.x * dt;
         enemies[i].position.y += enemies[i].velocity.y * dt;
 
@@ -52,7 +54,7 @@ void DrawEnemyPool()
 
 }
 
-void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius)
+void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity)
 {
     if (enemyCount <= MAX_ENEMY_COUNT)
     {
@@ -63,6 +65,7 @@ void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, flo
         enemies[enemyCount].config = pattern;
         enemies[enemyCount].radius = radius;
         enemies[enemyCount].currentShootTimer = shootTimer;
+        enemies[enemyCount].angularVelocity = angularVelocity;
         enemyCount++;
     }
 }
