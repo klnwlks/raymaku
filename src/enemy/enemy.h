@@ -18,11 +18,13 @@ typedef struct {
 } Enemy;
 
 // same struct as Enemy, but this will be used for stage to load enemies beforehand
+// no pos 
 typedef struct {
     int health;
     PatternConfig config;
     float shootTimer; // delay between shots 
     float radius;
+    Vector2 vel; // velocity
     float angularVelocity; // radian rotation applied to velocity vector
     float currentShootTimer;
     // TODO: loading textures / spritesheets
