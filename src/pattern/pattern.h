@@ -26,5 +26,6 @@ typedef struct {
 void ExecPattern(Vector2 pos, PatternConfig pat, BulletOwner owner);
 float AimPlayer(Vector2 pos);
 void UpdatePatterns(void);
+void SpawnPattern(PatternConfig config, BulletOwner owner, Vector2 pos, int shots, float timer, float shotDelay);
 
 #endif

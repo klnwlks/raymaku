@@ -67,3 +67,15 @@ void UpdatePatterns()
     }
 
 }
+
+// create new pattern and add to pool
+void SpawnPattern(PatternConfig config, BulletOwner owner, Vector2 pos, int shots, float timer, float shotDelay)
+{
+    patternPool[activePatterns].config = config;
+    patternPool[activePatterns].owner = owner;
+    patternPool[activePatterns].origin = pos;
+    patternPool[activePatterns].shots = shots;
+    patternPool[activePatterns].timer = timer;
+    patternPool[activePatterns].shotDelay = shotDelay;
+    activePatterns++;
+}
