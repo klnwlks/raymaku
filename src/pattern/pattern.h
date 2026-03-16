@@ -10,10 +10,21 @@ typedef struct {
     int arc; // in rad
     int angleOffset; // starting direction
     int spin; // if it will spin
-    int power;
+    int power; // attack power
 } PatternConfig;
+
+// for multivolley
+typedef struct {
+    PatternConfig config;
+    BulletOwner owner;
+    Vector2 origin;
+    int shots; // number of shots
+    float timer; // internal timer to keep track of frametime
+    float shotDelay; // delay in seconds between shots
+} PatternInstance; // will be used for a pool
 
 void ExecPattern(Vector2 pos, PatternConfig pat, BulletOwner owner);
 float AimPlayer(Vector2 pos);
+void UpdatePatterns(void);
 
 #endif

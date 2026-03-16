@@ -4,7 +4,10 @@
 #include "../player/player.h"
 #include <math.h>
 
-// TODO: REFACTOR FOR MUTLI VOLLEY PATTERNS
+#define MAX_PATTERNS 64
+
+static PatternInstance patternPool[MAX_PATTERNS];
+static int activePatterns = 0;
 
 // this will execute the pattern
 void ExecPattern(Vector2 pos, PatternConfig pat, BulletOwner owner)
@@ -22,7 +25,6 @@ void ExecPattern(Vector2 pos, PatternConfig pat, BulletOwner owner)
     {
         // move their firing angle
         float finalAngle = startAngle + (step * j);
-
         // get vector velocity
         Vector2 velocity = {
             cosf(finalAngle) * pat.speed,
@@ -41,4 +43,27 @@ float AimPlayer(Vector2 pos)
     return atan2f(direction.y, direction.x);
 }
 
-// TODO: DIFFFERENT BULLET TYPES
+// used for multivolley patterns, we run an internal update loop to keep track of delay between shots
+// then we update patterns accordingly
+void UpdatePatterns()
+{
+    float dt = GetFrameTime();
+    for (int i = 0; i < activePatterns; i++)
+    {
+        patternPool[i].timer += dt;
+        if (patternPool[i].timer >= patternPool[i].shotDelay) 
+        {
+            ExecPattern(patternPool[i].origin, patternPool[i].config, patternPool[i].owner);
+            patternPool[i].shots--;
+            patternPool[i].timer = 0;
+
+            if (patternPool[i].shots <= 0)
+            {
+                patternPool[i] = patternPool[activePatterns - 1];
+                activePatterns--;
+                i--;
+            }
+        }
+    }
+
+}
