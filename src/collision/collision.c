@@ -17,7 +17,7 @@ void ResolveCollisions()
     // iterate off player bullets and compare against enemies
     for (int i = 0; i < playerBulletCount; i++) 
     {
-        for (int j = 0; i < enemyCount; i++) 
+        for (int j = 0; j < enemyCount; j++) 
         {
             // if enemy has been hit
             if (CheckCollisionCircles(playerPool[i].position, playerPool[i].radius, enemyPool[j].position, enemyPool[j].radius)) 

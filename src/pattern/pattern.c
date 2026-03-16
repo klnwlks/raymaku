@@ -69,6 +69,7 @@ void UpdatePatterns()
 }
 
 // create new pattern and add to pool
+// TODO: ADD INSTANCING OF UNIQUE BULLET TYPES
 void SpawnPattern(PatternConfig config, BulletOwner owner, Vector2 pos, int shots, float timer, float shotDelay)
 {
     patternPool[activePatterns].config = config;
