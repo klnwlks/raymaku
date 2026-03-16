@@ -3,7 +3,8 @@
 
 void InitScore(void);
 void AddScore(int points);
-int GetScore(void);
-int GetHiScore(void);
+void SetScore(int points);
+unsigned long long int GetScore(void);
+unsigned long long int GetHiScore(void);
 
 #endif
