@@ -24,6 +24,7 @@ void ResolveCollisions()
             {
                EnemyHit(j, playerPool[i].power); 
                RemoveBullet(i, BULLET_PLAYER);
+               break;
             }
         }
     }

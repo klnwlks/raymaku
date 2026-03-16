@@ -10,9 +10,7 @@ typedef struct {
     int arc; // in rad
     int angleOffset; // starting direction
     int spin; // if it will spin
-    int shots; // how many times we shoot
     int power;
-    float delay; // delay between shots
 } PatternConfig;
 
 void ExecPattern(Vector2 pos, PatternConfig pat, BulletOwner owner);

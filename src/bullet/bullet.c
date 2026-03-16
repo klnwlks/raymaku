@@ -70,6 +70,7 @@ void DrawBulletPools(void)
     }
 }
 
+// TODO: DIFFFERENT BULLET TYPES
 void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner owner)
 {
     if (owner == BULLET_PLAYER)
