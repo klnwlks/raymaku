@@ -13,7 +13,8 @@ void InitPlayer()
     player.radius = 10.0f;
     player.lives = 3;
     player.bombs = 5;
-    player.iFrame = 2;
+    player.invincibility = 1;
+    player.invincibilityTimer = player.invincibility;
     player.shooting = false;
     
 }
@@ -42,6 +43,12 @@ void UpdatePlayer()
     player.position.x = Clamp(player.position.x, player.radius, PLAY_AREA_WIDTH - player.radius);
     player.position.y = Clamp(player.position.y, player.radius, PLAY_AREA_HEIGHT - player.radius);
 
+    // check iframes
+    if (player.invincibilityTimer > 0.0f)
+    {
+        player.invincibilityTimer -= GetFrameTime();
+    }
+
     // TODO: ADD CHECKS FOR SHOOTING, THEN UPDATE ACCORDINGLY
 }
 
@@ -59,8 +66,11 @@ void DrawPlayer()
 
 void PlayerHit()
 {
-    // TODO: ADD IFRAMES AND ETC 
-    player.lives--;
+    if (player.invincibilityTimer <= 0.0f)
+    {
+        player.lives--;
+        player.invincibilityTimer = player.invincibility;
+    }
 }
 
 void UnloadPlayer() 

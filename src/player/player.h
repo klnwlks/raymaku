@@ -12,8 +12,9 @@ typedef struct {
     int bombs;
     int power;
     float radius; // hitbox
+    float invincibilityTimer; // internal timer
     int points;
-    int iFrame;
+    float invincibility;
     bool shooting;
 } Player;
 
