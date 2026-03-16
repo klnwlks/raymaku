@@ -6,8 +6,9 @@
 typedef enum {
     ITEM_POWER,
     ITEM_POINT,
-    ITEM_HEALTH,
-    ITEM_LIFE
+    ITEM_LIFE,
+    ITEM_BOMB,
+    ITEM_LEFT
 } ItemType;
 
 typedef struct {
@@ -21,6 +22,6 @@ void InitItems();
 void SpawnItems(int count, ItemType type, Vector2 pos, int amount);
 void DrawItems(void);
 void UpdateItems(void);
-void RemoveItem(int index);
+void RemoveItem(int index, ItemType type);
 Item *GetItemPool(int *count);
 #endif

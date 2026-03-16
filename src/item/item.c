@@ -1,5 +1,8 @@
 #include "item.h"
 #include "../config.h"
+#include "raylib.h"
+#include "../player/player.h"
+#include "../score/score.h"
 
 #define MAX_ITEMS 200
 
@@ -24,14 +27,35 @@ void DrawItems()
     {
         // draw rectangles here idfk
         // TODO: add multiple drawing for texture types
-        DrawRectangleV(itemPool[i].pos, (Vector2){4.0f, 4.0f}, BLUE);
+        DrawCircleV(itemPool[i].pos, 4.0f, BLUE);
     }
 }
 
-void RemoveItem(int index)
+// this will also handle stat changes
+void RemoveItem(int index, ItemType type)
 {
     itemPool[index] = itemPool[itemCount -1];
     itemCount--;
+
+    Player* player = GetPlayer();
+
+    switch(type) 
+    {
+        case ITEM_LIFE:
+            player->lives++;
+            break;
+        case ITEM_POINT:
+            AddScore(itemPool[index].amt); 
+            break;
+        case ITEM_POWER:
+            player->power += itemPool[index].amt;
+            break;
+        case ITEM_BOMB:
+            player->bombs++;
+            break;
+        default:
+            break;
+    }
 }
 
 void UpdateItems(void) 

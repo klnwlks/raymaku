@@ -2,6 +2,8 @@
 #include "../bullet/bullet.h"
 #include "../enemy/enemy.h"
 #include "../player/player.h"
+#include "../item/item.h"
+#include "raylib.h"
 
 void ResolveCollisions()
 {
@@ -41,5 +43,16 @@ void ResolveCollisions()
             RemoveBullet(i, BULLET_ENEMY);
         }
 
+    }
+
+    // then check if player has touched items
+    int itemCount;
+    Item *itemPool = GetItemPool(&itemCount);
+    for (int i = 0; i < itemCount; i++)
+    {
+        if (CheckCollisionCircles(itemPool[i].pos, 4.0f, player->position, player->radius))
+        {
+            RemoveItem(i, itemPool[i].type);
+        }
     }
 }
