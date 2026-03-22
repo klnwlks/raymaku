@@ -68,7 +68,7 @@ void UpdatePlayer()
     for (int i = 0; i < player.activeOptions; i++)
     {
         float angle = (i % 2 == 0) ? -1.0f : 1.0f;
-        float distFactor = ((float) i / 2 + 1);
+        float distFactor = ((float) (i / 2) + 1);
         player.optionPos[i].x = player.position.x + (angle * spread * distFactor);
         player.optionPos[i].y = player.position.y - heightOffset + (player.focused ? 0 : 10.0f * distFactor);
     }
@@ -97,8 +97,9 @@ void UpdatePlayer()
         // Shoot from main player
         ExecPattern(player.position, player.pattern, BULLET_PLAYER);
         
-        // Shoot from active options
-        PatternConfig optPattern = { 1, 900.0f, 0, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+        // Shoot from active options (Homing bullets)
+        // rotationSpeed PI * 4 means it turns 720 degrees per second
+        PatternConfig optPattern = { 1, 800.0f, 0, -PI/2.0f, 0, 1, BULLET_HOMING, PI * 4.0f };
         for (int i = 0; i < player.activeOptions; i++)
         {
             ExecPattern(player.optionPos[i], optPattern, BULLET_PLAYER);
