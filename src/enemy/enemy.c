@@ -3,6 +3,7 @@
 #include "raymath.h"
 #include "../score/score.h"
 #include "../item/item.h"
+#include "../player/player.h"
 
 #define MAX_ENEMY_COUNT 100
 
@@ -109,4 +110,19 @@ Enemy *GetEnemies(int *count)
 {
     *count = enemyCount;
     return enemies;
+}
+
+// Helper to get angle from a position to the player
+float GetAngleToPlayer(Vector2 pos)
+{
+    Vector2 target = GetPlayer()->position;
+    return atan2f(target.y - pos.y, target.x - pos.x);
+}
+
+// Helper to get normalized direction vector from a position to the player
+Vector2 GetDirToPlayer(Vector2 pos)
+{
+    Vector2 target = GetPlayer()->position;
+    Vector2 dir = Vector2Subtract(target, pos);
+    return Vector2Normalize(dir);
 }

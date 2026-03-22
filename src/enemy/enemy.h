@@ -39,5 +39,7 @@ void DrawEnemyPool(void);
 void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity, float lifeTime);
 Enemy *GetEnemies(int* count);
 void EnemyHit(int index, int power);
+float GetAngleToPlayer(Vector2 pos);
+Vector2 GetDirToPlayer(Vector2 pos);
 
 #endif
