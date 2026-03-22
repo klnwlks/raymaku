@@ -14,7 +14,8 @@ typedef enum {
     BULLET_LINEAR,  // Standard straight-line movement
     BULLET_HOMING,  // Tracks player position
     BULLET_CURVING, // Constant angular velocity (spiral)
-    BULLET_FREEZE   // Spawns, stops, re-aims, then fires
+    BULLET_FREEZE,  // Spawns, stops, re-aims, then fires
+    BULLET_BOMB     // Clears enemy bullets on contact
 } BulletBehavior;
 
 // Bullet state for complex behaviors (like freeze and aim)

@@ -22,6 +22,23 @@ void ResolveCollisions()
     for (int i = 0; i < playerBulletCount; i++) 
     {
         bool hit = false;
+        
+        // BOMB LOGIC: Clear enemy bullets if this is a bomb bullet
+        if (playerPool[i].behavior == BULLET_BOMB)
+        {
+            int enemyBulletCount;
+            Bullet *enemyBullets = GetBulletPool(&enemyBulletCount, BULLET_ENEMY);
+            for (int k = 0; k < enemyBulletCount; k++)
+            {
+                if (CheckCollisionCircles(playerPool[i].position, playerPool[i].radius * 2.0f, enemyBullets[k].position, enemyBullets[k].radius))
+                {
+                    RemoveBullet(k, BULLET_ENEMY);
+                    enemyBullets = GetBulletPool(&enemyBulletCount, BULLET_ENEMY);
+                    k--;
+                }
+            }
+        }
+
         // check boss collision
         if (activeBoss->active)
         {

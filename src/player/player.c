@@ -90,6 +90,17 @@ void UpdatePlayer()
     // Shooting logic
     player.shooting = IsKeyDown(KEY_Z) || IsKeyDown(KEY_SPACE);
     
+    // Bomb logic
+    if (IsKeyPressed(KEY_X) && player.bombs > 0)
+    {
+        player.bombs--;
+        player.invincibilityTimer = 3.0f; // 3 seconds of invincibility during bomb
+        
+        // Complex big pattern: Multi-volley expanding circle
+        PatternConfig bombPattern = { 32, 400.0f, 2.0f * PI, 0, PI, 10, BULLET_BOMB, 0 };
+        SpawnPattern(bombPattern, BULLET_PLAYER, player.position, 12, 0, 0.15f);
+    }
+    
     if (player.currentShootTimer > 0.0f) player.currentShootTimer -= GetFrameTime();
 
     if (player.shooting && player.currentShootTimer <= 0.0f)

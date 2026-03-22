@@ -146,6 +146,20 @@ static void UpdateBulletArray(Bullet *bullets, int *count)
                     }
                 }
                 break;
+                
+            case BULLET_BOMB:
+                {
+                    b->timer -= dt;
+                    if (b->timer <= 0.0f)
+                    {
+                        // Remove bullet by swapping with last and decrementing count
+                        bullets[i] = bullets[*count - 1];
+                        (*count)--;
+                        i--; // Re-process this index
+                        continue;
+                    }
+                }
+                break;
         }
         
         // 2. Apply movement
@@ -183,7 +197,15 @@ void DrawBulletPools(void)
         if (playerBullets[i].position.x < 0 || playerBullets[i].position.x > PLAY_AREA_WIDTH ||
             playerBullets[i].position.y < 0 || playerBullets[i].position.y > PLAY_AREA_HEIGHT) continue;
 
-        DrawCircle(playerBullets[i].position.x + PLAY_AREA_X_OFFSET, playerBullets[i].position.y + PLAY_AREA_Y_OFFSET, playerBullets[i].radius, SKYBLUE);
+        if (playerBullets[i].behavior == BULLET_BOMB)
+        {
+            // Bomb looks like an expanding/pulsing glowing ball
+            DrawCircleGradient(playerBullets[i].position.x + PLAY_AREA_X_OFFSET, playerBullets[i].position.y + PLAY_AREA_Y_OFFSET, playerBullets[i].radius * 2.0f, WHITE, PURPLE);
+        }
+        else
+        {
+            DrawCircle(playerBullets[i].position.x + PLAY_AREA_X_OFFSET, playerBullets[i].position.y + PLAY_AREA_Y_OFFSET, playerBullets[i].radius, SKYBLUE);
+        }
     }
 
     // Draw Enemy Bullets (Red)
@@ -224,11 +246,21 @@ void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner
         b->velocity = vel;
         b->acceleration = accel;
         b->radius = (owner == BULLET_PLAYER) ? 4.0f : 6.0f;
+        
+        if (behavior == BULLET_BOMB)
+        {
+            b->radius = 12.0f;
+            b->timer = 2.0f; // Bomb bullets last for 2 seconds
+        }
+        else
+        {
+            b->timer = (behavior == BULLET_FREEZE) ? 0.3f : 0.0f; // Time to move before freeze
+        }
+
         b->power = power;
         b->owner = owner;
         b->behavior = behavior;
         b->state = STATE_ACTIVE;
-        b->timer = (behavior == BULLET_FREEZE) ? 0.3f : 0.0f; // Time to move before freeze
         b->speed = (speed == 0.0f) ? Vector2Length(vel) : speed;
         b->rotationSpeed = rotationSpeed;
     }
