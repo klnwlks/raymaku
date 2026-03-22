@@ -4,23 +4,6 @@
 *
 *   Options Screen Functions Definitions (Init, Update, Draw, Unload)
 *
-*   Copyright (c) 2014-2022 Ramon Santamaria (@raysan5)
-*
-*   This software is provided "as-is", without any express or implied warranty. In no event
-*   will the authors be held liable for any damages arising from the use of this software.
-*
-*   Permission is granted to anyone to use this software for any purpose, including commercial
-*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
-*
-*     1. The origin of this software must not be misrepresented; you must not claim that you
-*     wrote the original software. If you use this software in a product, an acknowledgment
-*     in the product documentation would be appreciated but is not required.
-*
-*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
-*     as being the original software.
-*
-*     3. This notice may not be removed or altered from any source distribution.
-*
 **********************************************************************************************/
 
 #include "raylib.h"
@@ -39,7 +22,6 @@ static int finishScreen = 0;
 // Options Screen Initialization logic
 void InitOptionsScreen(void)
 {
-    // TODO: Initialize OPTIONS screen variables here!
     framesCounter = 0;
     finishScreen = 0;
 }
@@ -47,19 +29,41 @@ void InitOptionsScreen(void)
 // Options Screen Update logic
 void UpdateOptionsScreen(void)
 {
-    // TODO: Update OPTIONS screen variables here!
+    framesCounter++;
+
+    // Press enter or tap to return to TITLE screen
+    if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP) || IsKeyPressed(KEY_ESCAPE))
+    {
+        finishScreen = 1;
+        PlaySound(fxCoin);
+    }
 }
 
 // Options Screen Draw logic
 void DrawOptionsScreen(void)
 {
-    // TODO: Draw OPTIONS screen here!
+    // Draw light background
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), RAYWHITE);
+
+    const int marginX = 80;
+
+    const char* titleText = "OPTIONS";
+    float titleFontSize = font.baseSize * 3.0f;
+    DrawTextEx(font, titleText, (Vector2){ (float)marginX, GetScreenHeight()*0.15f }, titleFontSize, 4, BLACK);
+
+    DrawText("AUDIO: ENABLED", marginX, GetScreenHeight()*0.4f, 20, LIGHTGRAY);
+    DrawText("INPUT: KEYBOARD", marginX, GetScreenHeight()*0.5f, 20, LIGHTGRAY);
+    
+    const char* backText = "> BACK TO TITLE";
+    DrawText(backText, marginX, GetScreenHeight()*0.75f, 30, BLACK);
+    
+    DrawText("PRESS ENTER or ESC to GO BACK", marginX, GetScreenHeight()*0.85f, 20, GRAY);
 }
 
 // Options Screen Unload logic
 void UnloadOptionsScreen(void)
 {
-    // TODO: Unload OPTIONS screen variables here!
+    // Nothing to unload
 }
 
 // Options Screen should finish?

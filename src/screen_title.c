@@ -4,27 +4,12 @@
 *
 *   Title Screen Functions Definitions (Init, Update, Draw, Unload)
 *
-*   Copyright (c) 2014-2022 Ramon Santamaria (@raysan5)
-*
-*   This software is provided "as-is", without any express or implied warranty. In no event
-*   will the authors be held liable for any damages arising from the use of this software.
-*
-*   Permission is granted to anyone to use this software for any purpose, including commercial
-*   applications, and to alter it and redistribute it freely, subject to the following restrictions:
-*
-*     1. The origin of this software must not be misrepresented; you must not claim that you
-*     wrote the original software. If you use this software in a product, an acknowledgment
-*     in the product documentation would be appreciated but is not required.
-*
-*     2. Altered source versions must be plainly marked as such, and must not be misrepresented
-*     as being the original software.
-*
-*     3. This notice may not be removed or altered from any source distribution.
-*
 **********************************************************************************************/
 
 #include "raylib.h"
 #include "screens.h"
+#include <stdlib.h>
+#include <math.h>
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
@@ -33,6 +18,17 @@ static int framesCounter = 0;
 static int finishScreen = 0;
 static int menuSelected = 0;    // 0: START, 1: OPTIONS
 
+#define MAX_TITLE_PARTICLES 80
+
+typedef struct TitleParticle {
+    Vector2 pos;
+    float speed;
+    float size;
+    float alpha;
+} TitleParticle;
+
+static TitleParticle titleParticles[MAX_TITLE_PARTICLES] = { 0 };
+
 //----------------------------------------------------------------------------------
 // Title Screen Functions Definition
 //----------------------------------------------------------------------------------
@@ -40,16 +36,36 @@ static int menuSelected = 0;    // 0: START, 1: OPTIONS
 // Title Screen Initialization logic
 void InitTitleScreen(void)
 {
-    // TODO: Initialize TITLE screen variables here!
     framesCounter = 0;
     finishScreen = 0;
     menuSelected = 0;
+
+    // Initialize monochrome background particles
+    for (int i = 0; i < MAX_TITLE_PARTICLES; i++)
+    {
+        titleParticles[i].pos = (Vector2){ (float)GetRandomValue(0, GetScreenWidth()), (float)GetRandomValue(0, GetScreenHeight()) };
+        titleParticles[i].speed = (float)GetRandomValue(50, 200)/100.0f;
+        titleParticles[i].size = (float)GetRandomValue(1, 3);
+        titleParticles[i].alpha = (float)GetRandomValue(2, 8)/10.0f;
+    }
 }
 
 // Title Screen Update logic
 void UpdateTitleScreen(void)
 {
-    // TODO: Update TITLE screen variables here!
+    framesCounter++;
+
+    // Update particles (monochrome drift)
+    for (int i = 0; i < MAX_TITLE_PARTICLES; i++)
+    {
+        titleParticles[i].pos.y += titleParticles[i].speed;
+        if (titleParticles[i].pos.y > GetScreenHeight())
+        {
+            titleParticles[i].pos.y = -titleParticles[i].size;
+            titleParticles[i].pos.x = (float)GetRandomValue(0, GetScreenWidth());
+        }
+    }
+
     if (IsKeyPressed(KEY_DOWN))
     {
         menuSelected++;
@@ -74,24 +90,66 @@ void UpdateTitleScreen(void)
 // Title Screen Draw logic
 void DrawTitleScreen(void)
 {
-    // TODO: Draw TITLE screen here!
-    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), GREEN);
-    Vector2 pos = { 20, 10 };
-    DrawTextEx(font, "TITLE SCREEN", pos, font.baseSize*3.0f, 4, DARKGREEN);
+    // Draw light background
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), RAYWHITE);
 
-    if (menuSelected == 0) DrawText("-> START GAME", 120, 220, 20, MAROON);
-    else DrawText("   START GAME", 120, 220, 20, DARKGREEN);
+    // Draw background particles (dark on light)
+    for (int i = 0; i < MAX_TITLE_PARTICLES; i++)
+    {
+        DrawCircleV(titleParticles[i].pos, titleParticles[i].size, Fade(BLACK, titleParticles[i].alpha * 0.15f));
+    }
 
-    if (menuSelected == 1) DrawText("-> OPTIONS", 120, 250, 20, MAROON);
-    else DrawText("   OPTIONS", 120, 250, 20, DARKGREEN);
+    // Flush left layout constants
+    const int marginX = 80;
+    
+    // Draw Title: RAYMAKU
+    const char* titleText = "RAYMAKU";
+    float titleFontSize = font.baseSize * 5.0f;
+    Vector2 titlePos = { (float)marginX, GetScreenHeight()*0.3f };
+    
+    // Black title on light background
+    DrawTextEx(font, titleText, titlePos, titleFontSize, 8, BLACK);
 
-    DrawText("USE UP/DOWN KEYS and ENTER", 120, 320, 10, DARKGREEN);
+    // Draw menu options
+    const char* startText = "START GAME";
+    const char* optionsText = "OPTIONS";
+    float menuFontSize = 30.0f;
+    
+    int startY = GetScreenHeight()*0.55f;
+    int optionsY = startY + 50;
+
+    // Start Game Option
+    if (menuSelected == 0)
+    {
+        float pulse = (sinf(framesCounter * 0.1f) + 1.0f) * 0.5f;
+        Color highlight = Fade(BLACK, 0.7f + pulse * 0.3f);
+        DrawText(TextFormat("> %s", startText), marginX, startY, menuFontSize, highlight);
+    }
+    else
+    {
+        DrawText(TextFormat("  %s", startText), marginX, startY, menuFontSize, LIGHTGRAY);
+    }
+
+    // Options Option
+    if (menuSelected == 1)
+    {
+        float pulse = (sinf(framesCounter * 0.1f) + 1.0f) * 0.5f;
+        Color highlight = Fade(BLACK, 0.7f + pulse * 0.3f);
+        DrawText(TextFormat("> %s", optionsText), marginX, optionsY, menuFontSize, highlight);
+    }
+    else
+    {
+        DrawText(TextFormat("  %s", optionsText), marginX, optionsY, menuFontSize, LIGHTGRAY);
+    }
+
+    const char* hintText = "UP/DOWN to select - ENTER to confirm";
+    DrawText(hintText, marginX, GetScreenHeight() * 0.85f, 20, GRAY);
 }
 
 // Title Screen Unload logic
 void UnloadTitleScreen(void)
 {
-    // TODO: Unload TITLE screen variables here!
+    // Nothing to unload
 }
 
 // Title Screen should finish?
