@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include "raymath.h"
 #include "config.h"
+#include "../item/item.h"
 
 static Player player = {0};
 
@@ -14,8 +15,8 @@ void InitPlayer()
     player.pickupRadius = 24.0f; // Generous item pickup radius
     player.lives = 3;
     player.bombs = 5;
-    player.invincibility = 1;
-    player.invincibilityTimer = player.invincibility;
+    player.invincibility = 2.5f; // Increased for recovery
+    player.invincibilityTimer = 0.0f;
     player.shooting = false;
     player.power = 1;
     
@@ -109,6 +110,12 @@ void UpdatePlayer()
 
 void DrawPlayer()
 {
+    // Blinking effect if invincible
+    if (player.invincibilityTimer > 0.0f)
+    {
+        if (((int)(player.invincibilityTimer * 10)) % 2 == 0) return;
+    }
+
      // actual screen position
     Vector2 screenPos = {
         player.position.x + PLAY_AREA_X_OFFSET,
@@ -122,7 +129,8 @@ void DrawPlayer()
         DrawCircleLines(player.optionPos[i].x + PLAY_AREA_X_OFFSET, player.optionPos[i].y + PLAY_AREA_Y_OFFSET, 6.0f, WHITE);
     }
 
-    DrawCircleV(screenPos, player.radius, RED);
+    DrawCircleV(screenPos, player.radius + 7.0f, RED);
+    DrawCircleLines(screenPos.x, screenPos.y, player.radius + 8.0f, WHITE);
     
     // Draw Hitbox (visual feedback for shift/focus)
     if (player.focused)
@@ -136,6 +144,21 @@ void PlayerHit()
     if (player.invincibilityTimer <= 0.0f)
     {
         player.lives--;
+        
+        // Drop some power
+        int dropAmount = player.power / 5; // Drop 20%
+        if (dropAmount > 5) dropAmount = 5; // Max 5 items
+        if (dropAmount < 1 && player.power > 0) dropAmount = 1;
+        
+        if (dropAmount > 0)
+        {
+            SpawnItems(dropAmount, ITEM_POWER, player.position, 1);
+            player.power -= dropAmount;
+            if (player.power < 0) player.power = 0;
+        }
+
+        // Revive in bottom center
+        player.position = (Vector2){ PLAY_AREA_WIDTH / 2.0f, PLAY_AREA_HEIGHT * 0.9f };
         player.invincibilityTimer = player.invincibility;
     }
 }
