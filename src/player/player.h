@@ -15,6 +15,7 @@ typedef struct {
     int bombs;
     int power;
     float radius; // hitbox
+    float pickupRadius; // item collection
     float invincibilityTimer; // internal timer
     int points;
     float invincibility;

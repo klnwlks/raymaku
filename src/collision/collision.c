@@ -73,7 +73,7 @@ void ResolveCollisions()
     Item *itemPool = GetItemPool(&itemCount);
     for (int i = 0; i < itemCount; i++)
     {
-        if (CheckCollisionCircles(itemPool[i].pos, 4.0f, player->position, player->radius))
+        if (CheckCollisionCircles(itemPool[i].pos, 8.0f, player->position, player->pickupRadius))
         {
             RemoveItem(i, itemPool[i].type);
             itemPool = GetItemPool(&itemCount);

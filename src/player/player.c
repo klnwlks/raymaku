@@ -10,7 +10,8 @@ void InitPlayer()
     // init player values
     player.position = (Vector2) { PLAY_AREA_WIDTH / 2.0f, PLAY_AREA_HEIGHT * 0.8f};
     player.speed = (Vector2) {4.0f, 4.0f};
-    player.radius = 10.0f;
+    player.radius = 3.0f; // Small death hitbox
+    player.pickupRadius = 24.0f; // Generous item pickup radius
     player.lives = 3;
     player.bombs = 5;
     player.invincibility = 1;

@@ -1,6 +1,7 @@
 #include "item.h"
 #include "../config.h"
 #include "raylib.h"
+#include "raymath.h"
 #include "../player/player.h"
 #include "../score/score.h"
 
@@ -9,9 +10,9 @@
 static Item itemPool[MAX_ITEMS];
 static int itemCount = 0;
 
-// used for the ""popping up and slowly falling effect""
-static float gravity = 9.8f;
-static Vector2 initVelocity = {0.0f, -30.0f};
+// items pop up and fall down
+static float gravity = 400.0f;
+static Vector2 initVelocity = {0.0f, -250.0f};
 
 void InitItems()
 {
@@ -19,15 +20,30 @@ void InitItems()
     {
         itemPool[i] = (Item){0};
     }
+    itemCount = 0;
 }
 
 void DrawItems()
 {
     for (int i = 0; i < itemCount; i++) 
     {
-        // draw rectangles here idfk
-        // TODO: add multiple drawing for texture types
-        DrawCircleV(itemPool[i].pos, 4.0f, BLUE);
+        // draw different colors for different types
+        Color itemColor = WHITE;
+        switch(itemPool[i].type)
+        {
+            case ITEM_POWER: itemColor = RED; break;
+            case ITEM_POINT: itemColor = BLUE; break;
+            case ITEM_LIFE: itemColor = PINK; break;
+            case ITEM_BOMB: itemColor = GREEN; break;
+        }
+
+        Vector2 screenPos = {
+            itemPool[i].pos.x + PLAY_AREA_X_OFFSET,
+            itemPool[i].pos.y + PLAY_AREA_Y_OFFSET
+        };
+
+        DrawCircleV(screenPos, 4.0f, itemColor);
+        DrawCircleLines(screenPos.x, screenPos.y, 5.0f, WHITE);
     }
 }
 
@@ -62,16 +78,43 @@ void RemoveItem(int index, ItemType type)
 void UpdateItems(void) 
 {
     float dt = GetFrameTime();
+    Player *player = GetPlayer();
+    
+    // Point of Collection (POC): top 25% of screen pulls everything
+    float pocLine = PLAY_AREA_HEIGHT * 0.3f;
+    bool playerAbovePOC = player->position.y < pocLine;
+
     for (int i = 0; i < itemCount; i++)
     {
-        // update position
-        itemPool[i].velocity.y += gravity * dt;
-        itemPool[i].pos.y += itemPool[i].velocity.y * dt;
+        // Attraction check
+        if (playerAbovePOC) 
+        {
+            itemPool[i].attracted = true;
+        }
+        else
+        {
+            float dist = Vector2Distance(itemPool[i].pos, player->position);
+            if (dist < 100.0f) itemPool[i].attracted = true;
+        }
 
-        // check if we're past the screen
-        bool offScreen = (itemPool[i].pos.x < -100 || 
-                          itemPool[i].pos.x > PLAY_AREA_WIDTH + 100 ||
-                          itemPool[i].pos.y > PLAY_AREA_HEIGHT + 100);
+        if (itemPool[i].attracted)
+        {
+            // Accelerated flight toward player
+            Vector2 dir = Vector2Normalize(Vector2Subtract(player->position, itemPool[i].pos));
+            float attractionSpeed = 800.0f;
+            itemPool[i].pos = Vector2Add(itemPool[i].pos, Vector2Scale(dir, attractionSpeed * dt));
+        }
+        else
+        {
+            // Normal falling position
+            itemPool[i].velocity.y += gravity * dt;
+            itemPool[i].pos.y += itemPool[i].velocity.y * dt;
+            itemPool[i].pos.x += itemPool[i].velocity.x * dt;
+        }
+
+        // check if we're past the screen boundaries
+        bool offScreen = (itemPool[i].pos.y > PLAY_AREA_HEIGHT + 20);
+        
         if (offScreen)
         {
             itemPool[i] = itemPool[itemCount - 1]; 
@@ -82,17 +125,25 @@ void UpdateItems(void)
 }
 
 // init velocity as initvelocity
-void SpawnItems(int count, ItemType type, Vector2 pos, int amount){
+void SpawnItems(int count, ItemType type, Vector2 pos, int amount)
+{
     for (int i = 0; i < count; i++)
     {
+        if (itemCount >= MAX_ITEMS) break;
+
         Vector2 newpos = {
-            GetRandomValue(pos.x - 10, pos.x + 10),
-            GetRandomValue(pos.y - 10, pos.y + 10)
+            GetRandomValue(pos.x - 15, pos.x + 15),
+            GetRandomValue(pos.y - 15, pos.y + 15)
         };
+        
+        // Spread items slightly sideways
+        Vector2 spreadVel = { (float)GetRandomValue(-100, 100), initVelocity.y };
+
         itemPool[itemCount].pos = newpos;
-        itemPool[itemCount].velocity = initVelocity;
+        itemPool[itemCount].velocity = spreadVel;
         itemPool[itemCount].type = type;
         itemPool[itemCount].amt = amount;
+        itemPool[itemCount].attracted = false;
         itemCount++;
     }
 }

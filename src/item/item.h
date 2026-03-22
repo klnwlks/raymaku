@@ -15,6 +15,7 @@ typedef struct {
     ItemType type;
     Vector2 pos;
     Vector2 velocity;
+    bool attracted;
 } Item;
 
 void InitItems();
