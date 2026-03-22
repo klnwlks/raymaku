@@ -22,6 +22,12 @@ void UpdateEnemyPool()
         enemies[i].position.x += enemies[i].velocity.x * dt;
         enemies[i].position.y += enemies[i].velocity.y * dt;
 
+        // update lifetime
+        if (enemies[i].lifeTime > 0.0f)
+        {
+            enemies[i].currentLifeTime -= dt;
+        }
+
         // shoot 
         enemies[i].currentShootTimer -= dt;
         if (enemies[i].currentShootTimer <= 0.0f)
@@ -30,12 +36,13 @@ void UpdateEnemyPool()
             enemies[i].currentShootTimer = enemies[i].shootTimer;
         }
 
-        // update if out of bounds / destroyed
+        // update if out of bounds / destroyed / expired
         bool offScreen = (enemies[i].position.x < -50 || enemies[i].position.x > PLAY_AREA_WIDTH + 50 
                         || enemies[i].position.y < - 50 || enemies[i].position.y > PLAY_AREA_HEIGHT + 50 );
         bool isDead = (enemies[i].health <= 0);
+        bool expired = (enemies[i].lifeTime > 0.0f && enemies[i].currentLifeTime <= 0.0f);
 
-        if (offScreen || isDead) 
+        if (offScreen || isDead || expired) 
         {
             enemies[i] = enemies[enemyCount - 1];
             enemyCount--;
@@ -54,9 +61,9 @@ void DrawEnemyPool()
 
 }
 
-void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity)
+void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity, float lifeTime)
 {
-    if (enemyCount <= MAX_ENEMY_COUNT)
+    if (enemyCount < MAX_ENEMY_COUNT)
     {
         enemies[enemyCount].position = pos;
         enemies[enemyCount].velocity = vel;
@@ -66,6 +73,8 @@ void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, flo
         enemies[enemyCount].radius = radius;
         enemies[enemyCount].currentShootTimer = shootTimer;
         enemies[enemyCount].angularVelocity = angularVelocity;
+        enemies[enemyCount].lifeTime = lifeTime;
+        enemies[enemyCount].currentLifeTime = lifeTime;
         enemyCount++;
     }
 }

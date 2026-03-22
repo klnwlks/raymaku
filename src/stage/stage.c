@@ -30,7 +30,7 @@ void UpdateSpawn(void)
         // shorthand so to spare myself the pity of typing that 7 times
         // TODO: rewrite spawnenemy as accepting of enemydata
         StageSpawn *enem = &spawnQueue.queue[spawnQueue.front];
-        SpawnEnemy(enem->pos, enem->data.vel, enem->data.health, enem->data.config, enem->data.shootTimer, enem->data.radius, enem->data.angularVelocity);
+        SpawnEnemy(enem->pos, enem->data.vel, enem->data.health, enem->data.config, enem->data.shootTimer, enem->data.radius, enem->data.angularVelocity, enem->data.lifeTime);
         // spawn enemy and dequeue
         // if empty reset pointers
         if (spawnQueue.front == spawnQueue.rear) 

@@ -4,7 +4,7 @@
 #include "raylib.h"
 #include "../pattern/pattern.h"
 
-// TODO: ADD A TIMER FOR HOW LONG THEYLL STAY ON SCREEN
+// Enemy struct with lifetime
 typedef struct {
     Vector2 position;
     Vector2 velocity;
@@ -14,6 +14,8 @@ typedef struct {
     float radius;
     float angularVelocity; // radian rotation applied to velocity vector
     float currentShootTimer;
+    float lifeTime; // how long they stay on screen
+    float currentLifeTime;
     // TODO: add support for loading textures
 } Enemy;
 
@@ -27,13 +29,14 @@ typedef struct {
     Vector2 vel; // velocity
     float angularVelocity; // radian rotation applied to velocity vector
     float currentShootTimer;
+    float lifeTime;
     // TODO: loading textures / spritesheets
 } EnemyData;
 
 void InitEnemyPool(void);
 void UpdateEnemyPool(void);
 void DrawEnemyPool(void);
-void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity);
+void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity, float lifeTime);
 Enemy *GetEnemies(int* count);
 void EnemyHit(int index, int power);
 
