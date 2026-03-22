@@ -1,6 +1,8 @@
 #include "boss.h"
 #include "../pattern/pattern.h"
 #include "../player/player.h"
+#include "../score/score.h"
+#include "../item/item.h"
 #include <string.h>
 
 static Boss currBoss = {0};
@@ -22,6 +24,11 @@ void SpawnBoss(Boss data)
 
 static void NextPhase(void)
 {
+    // Bonus for completing phase
+    AddScore(1000);
+    SpawnItems(10, ITEM_POINT, currBoss.pos, 100);
+    SpawnItems(5, ITEM_POWER, currBoss.pos, 1);
+
     currBoss.currPhase++;
     if (currBoss.currPhase >= currBoss.totalPhases)
     {

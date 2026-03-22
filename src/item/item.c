@@ -34,7 +34,8 @@ void DrawItems()
 // this will also handle stat changes
 void RemoveItem(int index, ItemType type)
 {
-    itemPool[index] = itemPool[itemCount -1];
+    int amt = itemPool[index].amt;
+    itemPool[index] = itemPool[itemCount - 1];
     itemCount--;
 
     Player* player = GetPlayer();
@@ -45,10 +46,10 @@ void RemoveItem(int index, ItemType type)
             player->lives++;
             break;
         case ITEM_POINT:
-            AddScore(itemPool[index].amt); 
+            AddScore(amt); 
             break;
         case ITEM_POWER:
-            player->power += itemPool[index].amt;
+            player->power += amt;
             break;
         case ITEM_BOMB:
             player->bombs++;

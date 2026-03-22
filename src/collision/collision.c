@@ -29,6 +29,8 @@ void ResolveCollisions()
             {
                 BossHit(playerPool[i].power);
                 RemoveBullet(i, BULLET_PLAYER);
+                playerPool = GetBulletPool(&playerBulletCount, BULLET_PLAYER);
+                i--;
                 hit = true;
             }
         }
@@ -42,6 +44,9 @@ void ResolveCollisions()
             {
                EnemyHit(j, playerPool[i].power); 
                RemoveBullet(i, BULLET_PLAYER);
+               playerPool = GetBulletPool(&playerBulletCount, BULLET_PLAYER);
+               enemyPool = GetEnemies(&enemyCount); // enemy status might change
+               i--;
                break;
             }
         }
@@ -57,6 +62,8 @@ void ResolveCollisions()
         {
             PlayerHit();
             RemoveBullet(i, BULLET_ENEMY);
+            bulletPool = GetBulletPool(&enemyBulletCount, BULLET_ENEMY);
+            i--;
         }
 
     }
@@ -69,6 +76,8 @@ void ResolveCollisions()
         if (CheckCollisionCircles(itemPool[i].pos, 4.0f, player->position, player->radius))
         {
             RemoveItem(i, itemPool[i].type);
+            itemPool = GetItemPool(&itemCount);
+            i--;
         }
     }
 }

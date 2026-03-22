@@ -32,6 +32,9 @@
 #include "bullet/bullet.h"
 #include "enemy/enemy.h"
 #include "pattern/pattern.h"
+#include "score/score.h"
+#include "item/item.h"
+#include "stage/stage.h"
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
@@ -51,10 +54,15 @@ void InitGameplayScreen(void)
     finishScreen = 0;
     levelPaused = false;
     
+    InitScore();
+    InitItems();
     InitPlayer();
     InitEnemyPool();
     InitBoss();
     InitBulletPools();
+    
+    // Start Stage 1
+    Stage1();
 }
 
 // Gameplay Screen Update logic
@@ -65,11 +73,13 @@ void UpdateGameplayScreen(void)
 
     framesCounter++;
 
+    UpdateSpawn();
     UpdatePlayer();
     UpdateEnemyPool();
     UpdateBoss();
     UpdatePatterns();
     UpdateBulletPools();
+    UpdateItems();
     
     ResolveCollisions();
 
@@ -89,7 +99,7 @@ void UpdateGameplayScreen(void)
         testBoss.phases[0].maxHealth = 500;
         testBoss.phases[0].timer = 30.0f;
         testBoss.phases[0].shootDelay = 1.0f;
-        testBoss.phases[0].startPos = (Vector2){ GetScreenWidth()/2, 150 };
+        testBoss.phases[0].startPos = (Vector2){ PLAY_AREA_X_OFFSET + PLAY_AREA_WIDTH/2, 150 };
         testBoss.phases[0].pattern = (PatternConfig){ 16, 200.0f, 2.0f * PI, 0, 0, 1, BULLET_LINEAR, 0 };
 
         // Phase 2: Survival Spiral
@@ -97,7 +107,7 @@ void UpdateGameplayScreen(void)
         testBoss.phases[1].isSurvival = true;
         testBoss.phases[1].timer = 15.0f;
         testBoss.phases[1].shootDelay = 0.1f;
-        testBoss.phases[1].startPos = (Vector2){ GetScreenWidth()/2, 150 };
+        testBoss.phases[1].startPos = (Vector2){ PLAY_AREA_X_OFFSET + PLAY_AREA_WIDTH/2, 150 };
         testBoss.phases[1].pattern = (PatternConfig){ 1, 300.0f, 0, 0, 10.0f, 1, BULLET_LINEAR, 0 };
 
         SpawnBoss(testBoss);
@@ -110,18 +120,47 @@ void UpdateGameplayScreen(void)
     }
 }
 
+// Helper to draw UI
+static void DrawUI(void)
+{
+    int uiX = PLAY_AREA_X_OFFSET + PLAY_AREA_WIDTH + 20;
+    int uiY = 40;
+    
+    DrawText("SCORE", uiX, uiY, 20, RAYWHITE);
+    DrawText(TextFormat("%020llu", GetScore()), uiX, uiY + 25, 20, YELLOW);
+    
+    DrawText("HI-SCORE", uiX, uiY + 60, 20, RAYWHITE);
+    DrawText(TextFormat("%020llu", GetHiScore()), uiX, uiY + 85, 20, GOLD);
+    
+    Player *p = GetPlayer();
+    DrawText("LIVES", uiX, uiY + 130, 20, RAYWHITE);
+    for (int i = 0; i < p->lives; i++) DrawCircle(uiX + 15 + i * 25, uiY + 160, 10, RED);
+    
+    DrawText("BOMBS", uiX, uiY + 190, 20, RAYWHITE);
+    for (int i = 0; i < p->bombs; i++) DrawCircle(uiX + 15 + i * 25, uiY + 220, 10, GREEN);
+
+    DrawText("POWER", uiX, uiY + 250, 20, RAYWHITE);
+    DrawText(TextFormat("%d", p->power), uiX, uiY + 275, 20, BLUE);
+}
+
 // Gameplay Screen Draw logic
 void DrawGameplayScreen(void)
 {
     DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
     
-    // main play area
-    DrawRectangle(PLAY_AREA_X_OFFSET, PLAY_AREA_Y_OFFSET, PLAY_AREA_WIDTH, PLAY_AREA_HEIGHT, DARKGRAY);
+    // main play area background
+    DrawRectangle(PLAY_AREA_X_OFFSET, PLAY_AREA_Y_OFFSET, PLAY_AREA_WIDTH, PLAY_AREA_HEIGHT, ColorAlpha(DARKGRAY, 0.3f));
+    DrawRectangleLines(PLAY_AREA_X_OFFSET, PLAY_AREA_Y_OFFSET, PLAY_AREA_WIDTH, PLAY_AREA_HEIGHT, GRAY);
 
+    // Draw game elements within play area (clipping would be nice but simple offset for now)
     DrawPlayer();
     DrawEnemyPool();
     DrawBoss();
+    DrawItems();
     DrawBulletPools();
+
+    // UI
+    DrawUI();
 
     if (levelPaused)
     {
@@ -133,8 +172,8 @@ void DrawGameplayScreen(void)
 // Gameplay Screen Unload logic
 void UnloadGameplayScreen(void)
 {
-    // TODO: Unload GAMEPLAY screen variables here!
     UnloadPlayer();
+    ClearStage();
 }
 
 // Gameplay Screen should finish?

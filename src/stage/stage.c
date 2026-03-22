@@ -81,4 +81,23 @@ void Spawn(Vector2 pos, EnemyData data, float spawnTime)
 void Stage1(void)
 {
     ClearStage();
+
+    EnemyData fodder = { 5, (PatternConfig){ 1, 300.0f, 0, PI/2.0f, 0, 1, BULLET_LINEAR, 0 }, 1.0f, 15.0f, (Vector2){ 0, 100.0f }, 0.0f, 1.0f, 10.0f };
+    EnemyData curved = { 10, (PatternConfig){ 3, 200.0f, PI/4.0f, PI/2.0f, 0, 1, BULLET_LINEAR, 0 }, 0.5f, 20.0f, (Vector2){ 50.0f, 50.0f }, 0.5f, 0.5f, 15.0f };
+    
+    // Wave 1: Fodder from top
+    for (int i = 0; i < 5; i++)
+    {
+        Spawn((Vector2){ 100 + i * 100, -20 }, fodder, 1.0f + i * 0.5f);
+    }
+
+    // Wave 2: Curved enemies
+    Spawn((Vector2){ 50, -20 }, curved, 5.0f);
+    Spawn((Vector2){ 550, -20 }, curved, 5.0f);
+
+    // Wave 3: More fodder
+    for (int i = 0; i < 8; i++)
+    {
+        Spawn((Vector2){ GetRandomValue(50, 550), -20 }, fodder, 10.0f + i * 0.3f);
+    }
 }

@@ -54,6 +54,24 @@ void UpdatePlayer()
         player.invincibilityTimer -= GetFrameTime();
     }
 
+    // Update pattern based on power
+    if (player.power < 10)
+    {
+        player.pattern = (PatternConfig){ 1, 800.0f, 0, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+    }
+    else if (player.power < 25)
+    {
+        player.pattern = (PatternConfig){ 2, 800.0f, 0.1f, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+    }
+    else if (player.power < 50)
+    {
+        player.pattern = (PatternConfig){ 3, 850.0f, 0.2f, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+    }
+    else
+    {
+        player.pattern = (PatternConfig){ 5, 900.0f, 0.4f, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+    }
+
     // Shooting logic
     player.shooting = IsKeyDown(KEY_Z) || IsKeyDown(KEY_SPACE);
     
