@@ -3,6 +3,7 @@
 
 #include "raylib.h"
 #include <stdbool.h>
+#include "../pattern/pattern.h"
 
 // player struct
 typedef struct {
@@ -16,6 +17,9 @@ typedef struct {
     int points;
     float invincibility;
     bool shooting;
+    PatternConfig pattern;
+    float shootTimer;
+    float currentShootTimer;
 } Player;
 
 // function prototypes for player movement and shooting

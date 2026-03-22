@@ -16,7 +16,12 @@ void InitPlayer()
     player.invincibility = 1;
     player.invincibilityTimer = player.invincibility;
     player.shooting = false;
+    player.power = 1;
     
+    // Default player pattern: Fast straight bullets shooting UP
+    player.pattern = (PatternConfig){ 1, 800.0f, 0, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+    player.shootTimer = 0.08f;
+    player.currentShootTimer = 0.0f;
 }
 
 void UpdatePlayer() 
@@ -49,7 +54,16 @@ void UpdatePlayer()
         player.invincibilityTimer -= GetFrameTime();
     }
 
-    // TODO: ADD CHECKS FOR SHOOTING, THEN UPDATE ACCORDINGLY
+    // Shooting logic
+    player.shooting = IsKeyDown(KEY_Z) || IsKeyDown(KEY_SPACE);
+    
+    if (player.currentShootTimer > 0.0f) player.currentShootTimer -= GetFrameTime();
+
+    if (player.shooting && player.currentShootTimer <= 0.0f)
+    {
+        ExecPattern(player.position, player.pattern, BULLET_PLAYER);
+        player.currentShootTimer = player.shootTimer;
+    }
 }
 
 void DrawPlayer()
