@@ -1,9 +1,11 @@
 #include "bullet.h"
 #include "../config.h"
 #include "../player/player.h"
+#include "../enemy/enemy.h"
 #include "raymath.h"
 #include <stdbool.h>
 #include <stddef.h>
+#include <float.h>
 
 #define MAX_PLAYER_BULLETS 500
 #define MAX_ENEMY_BULLETS 5000
@@ -28,6 +30,9 @@ static void UpdateBulletArray(Bullet *bullets, int *count)
     float dt = GetFrameTime();
     Player *player = GetPlayer();
     
+    int enemyCount = 0;
+    Enemy *enemyPool = GetEnemies(&enemyCount);
+
     for (int i = 0; i < *count; i++)
     {
         Bullet *b = &bullets[i];
@@ -43,29 +48,62 @@ static void UpdateBulletArray(Bullet *bullets, int *count)
 
             case BULLET_HOMING:
                 {
-                    // Track player position
-                    Vector2 toPlayer = Vector2Subtract(player->position, b->position);
-                    float targetAngle = atan2f(toPlayer.y, toPlayer.x);
-                    float currentAngle = atan2f(b->velocity.y, b->velocity.x);
-                    
-                    // Normalize angles and get the difference
-                    float angleDiff = targetAngle - currentAngle;
-                    while (angleDiff > PI) angleDiff -= 2.0f * PI;
-                    while (angleDiff < -PI) angleDiff += 2.0f * PI;
-                    
-                    // Rotate velocity vector toward player
-                    float rotation = b->rotationSpeed * dt;
-                    if (fabsf(angleDiff) < rotation)
+                    Vector2 targetPos = { 0, 0 };
+                    bool targetFound = false;
+
+                    if (b->owner == BULLET_ENEMY)
                     {
-                        currentAngle = targetAngle;
+                        targetPos = player->position;
+                        targetFound = true;
                     }
                     else
                     {
-                        currentAngle += (angleDiff > 0) ? rotation : -rotation;
+                        // Find nearest enemy
+                        float minDist = FLT_MAX;
+                        for (int j = 0; j < enemyCount; j++)
+                        {
+                            float dist = Vector2Distance(b->position, enemyPool[j].position);
+                            if (dist < minDist)
+                            {
+                                minDist = dist;
+                                targetPos = enemyPool[j].position;
+                                targetFound = true;
+                            }
+                        }
+                        
+                        // If no enemies, move slightly towards top of screen
+                        if (!targetFound)
+                        {
+                            targetPos = (Vector2){ b->position.x, -100.0f };
+                            targetFound = true;
+                        }
                     }
-                    
-                    b->velocity.x = cosf(currentAngle) * b->speed;
-                    b->velocity.y = sinf(currentAngle) * b->speed;
+
+                    if (targetFound)
+                    {
+                        Vector2 toTarget = Vector2Subtract(targetPos, b->position);
+                        float targetAngle = atan2f(toTarget.y, toTarget.x);
+                        float currentAngle = atan2f(b->velocity.y, b->velocity.x);
+                        
+                        // Normalize angles and get the difference
+                        float angleDiff = targetAngle - currentAngle;
+                        while (angleDiff > PI) angleDiff -= 2.0f * PI;
+                        while (angleDiff < -PI) angleDiff += 2.0f * PI;
+                        
+                        // Rotate velocity vector toward target
+                        float rotation = b->rotationSpeed * dt;
+                        if (fabsf(angleDiff) < rotation)
+                        {
+                            currentAngle = targetAngle;
+                        }
+                        else
+                        {
+                            currentAngle += (angleDiff > 0) ? rotation : -rotation;
+                        }
+                        
+                        b->velocity.x = cosf(currentAngle) * b->speed;
+                        b->velocity.y = sinf(currentAngle) * b->speed;
+                    }
                 }
                 break;
 
@@ -187,6 +225,7 @@ void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner
         b->acceleration = accel;
         b->radius = (owner == BULLET_PLAYER) ? 4.0f : 6.0f;
         b->power = power;
+        b->owner = owner;
         b->behavior = behavior;
         b->state = STATE_ACTIVE;
         b->timer = (behavior == BULLET_FREEZE) ? 0.3f : 0.0f; // Time to move before freeze

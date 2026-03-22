@@ -11,8 +11,8 @@ static Item itemPool[MAX_ITEMS];
 static int itemCount = 0;
 
 // items pop up and fall down slowly
-static float gravity = 90.0f;
-static Vector2 initVelocity = {0.0f, -90.0f};
+static float gravity = 45.0f;
+static Vector2 initVelocity = {0.0f, -45.0f};
 
 void InitItems()
 {

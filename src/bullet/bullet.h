@@ -31,6 +31,7 @@ typedef struct {
     Vector2 acceleration;
     float radius;
     int power;
+    BulletOwner owner;
     BulletBehavior behavior;
     BulletState state;
     float timer;
