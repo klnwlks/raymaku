@@ -27,6 +27,11 @@
 #include "screens.h"
 #include "config.h"
 #include "player/player.h"
+#include "boss/boss.h"
+#include "collision/collision.h"
+#include "bullet/bullet.h"
+#include "enemy/enemy.h"
+#include "pattern/pattern.h"
 
 //----------------------------------------------------------------------------------
 // Module Variables Definition (local)
@@ -42,29 +47,63 @@ static bool levelPaused = false;
 // Gameplay Screen Initialization logic
 void InitGameplayScreen(void)
 {
-    // TODO: Initialize GAMEPLAY screen variables here!
     framesCounter = 0;
     finishScreen = 0;
     levelPaused = false;
+    
     InitPlayer();
+    InitEnemyPool();
+    InitBoss();
+    InitBulletPools();
 }
 
 // Gameplay Screen Update logic
 void UpdateGameplayScreen(void)
 {
-    framesCounter++;
     if (IsKeyPressed(KEY_P)) levelPaused = !levelPaused;
-
-    // if guard
     if (levelPaused) return;
 
+    framesCounter++;
+
     UpdatePlayer();
+    UpdateEnemyPool();
+    UpdateBoss();
+    UpdatePatterns();
+    UpdateBulletPools();
+    
+    ResolveCollisions();
 
-    // TODO: Update GAMEPLAY screen variables here!
-    // NOTE: to streamline development, we will use relative positions inside the rectangle square to streamline thinigs
+    // TEMPORARY: Spawn a test boss with B key
+    if (IsKeyPressed(KEY_B))
+    {
+        Boss testBoss = {0};
+        testBoss.name = "REAVER";
+        testBoss.active = true;
+        testBoss.radius = 40.0f;
+        testBoss.totalPhases = 2;
+        testBoss.moveMode = BOSS_MOVE_OSCILLATE;
 
-    // Press enter or tap to change to ENDING screen
-    if (IsKeyPressed(KEY_ENTER) || IsGestureDetected(GESTURE_TAP))
+        // Phase 1: Simple Circle
+        testBoss.phases[0].name = "VOID CIRCLE";
+        testBoss.phases[0].health = 500;
+        testBoss.phases[0].maxHealth = 500;
+        testBoss.phases[0].timer = 30.0f;
+        testBoss.phases[0].shootDelay = 1.0f;
+        testBoss.phases[0].startPos = (Vector2){ GetScreenWidth()/2, 150 };
+        testBoss.phases[0].pattern = (PatternConfig){ 16, 200.0f, 360, 0, 0, 1 };
+
+        // Phase 2: Survival Spiral
+        testBoss.phases[1].name = "DESPERATION SPIRAL";
+        testBoss.phases[1].isSurvival = true;
+        testBoss.phases[1].timer = 15.0f;
+        testBoss.phases[1].shootDelay = 0.1f;
+        testBoss.phases[1].startPos = (Vector2){ GetScreenWidth()/2, 150 };
+        testBoss.phases[1].pattern = (PatternConfig){ 1, 300.0f, 0, 0, 10, 1 };
+
+        SpawnBoss(testBoss);
+    }
+
+    if (IsKeyPressed(KEY_ENTER))
     {
         finishScreen = 1;
         PlaySound(fxCoin);
@@ -74,16 +113,15 @@ void UpdateGameplayScreen(void)
 // Gameplay Screen Draw logic
 void DrawGameplayScreen(void)
 {
-    // TODO: Draw GAMEPLAY screen here!
-    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), PURPLE);
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
     
     // main play area
-    DrawRectangle(PLAY_AREA_X_OFFSET, PLAY_AREA_Y_OFFSET, PLAY_AREA_WIDTH, PLAY_AREA_HEIGHT, WHITE);
-    DrawRectangleLines(PLAY_AREA_X_OFFSET, PLAY_AREA_Y_OFFSET, PLAY_AREA_WIDTH, PLAY_AREA_HEIGHT, BLACK);
+    DrawRectangle(PLAY_AREA_X_OFFSET, PLAY_AREA_Y_OFFSET, PLAY_AREA_WIDTH, PLAY_AREA_HEIGHT, DARKGRAY);
 
     DrawPlayer();
-    
-    // DrawText(TextFormat("%020lu", score), 40, 20, 40, BLACK);
+    DrawEnemyPool();
+    DrawBoss();
+    DrawBulletPools();
 
     if (levelPaused)
     {

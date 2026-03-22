@@ -8,7 +8,6 @@ typedef enum {
     ITEM_POINT,
     ITEM_LIFE,
     ITEM_BOMB,
-    ITEM_LEFT
 } ItemType;
 
 typedef struct {

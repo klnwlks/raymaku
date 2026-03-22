@@ -3,6 +3,7 @@
 #include "../enemy/enemy.h"
 #include "../player/player.h"
 #include "../item/item.h"
+#include "../boss/boss.h"
 #include "raylib.h"
 
 void ResolveCollisions()
@@ -15,10 +16,25 @@ void ResolveCollisions()
     // get list of enemies
     int enemyCount;
     Enemy *enemyPool = GetEnemies(&enemyCount);
+    Boss *activeBoss = GetActiveBoss();
 
-    // iterate off player bullets and compare against enemies
+    // iterate off player bullets and compare against enemies and boss
     for (int i = 0; i < playerBulletCount; i++) 
     {
+        bool hit = false;
+        // check boss collision
+        if (activeBoss->active)
+        {
+            if (CheckCollisionCircles(playerPool[i].position, playerPool[i].radius, activeBoss->pos, activeBoss->radius))
+            {
+                BossHit(playerPool[i].power);
+                RemoveBullet(i, BULLET_PLAYER);
+                hit = true;
+            }
+        }
+        
+        if (hit) continue;
+
         for (int j = 0; j < enemyCount; j++) 
         {
             // if enemy has been hit
