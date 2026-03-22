@@ -96,4 +96,172 @@ void Stage1(void)
 {
     ClearStage();
 
+    // Base Patterns
+    PatternConfig patBasic = {1, 250.0f, 0, PI/2, 0, 10, BULLET_LINEAR, 0};
+    PatternConfig patAimed = {1, 200.0f, 0, PI/2, 0, 10, BULLET_FREEZE, 0}; // Starts straight, freezes, aims
+    PatternConfig patSpread = {3, 200.0f, PI/4, PI/2, 0, 10, BULLET_LINEAR, 0};
+    PatternConfig patRing = {8, 150.0f, PI*2, 0, 0, 10, BULLET_LINEAR, 0};
+    PatternConfig patCurving = {2, 150.0f, PI/6, PI/2, 0, 10, BULLET_CURVING, 1.5f}; // curves outward
+    
+    // Base Enemies (EnemyData)
+    // Fodder 1 (Straight, basic shot)
+    EnemyData fodder1 = {5, patBasic, 1.0f, 15.0f, (Vector2){0, 120}, 0.0f, 1.0f, 10.0f};
+    
+    // Fodder 2 (Aimed, slower)
+    EnemyData fodder2 = {10, patAimed, 1.5f, 15.0f, (Vector2){0, 80}, 0.0f, 1.0f, 15.0f};
+
+    // Sweeper (Moves horizontally)
+    EnemyData sweeperR = {15, patSpread, 1.0f, 20.0f, (Vector2){100, 10}, 0.0f, 0.5f, 12.0f};
+    EnemyData sweeperL = {20, patSpread, 1.0f, 20.0f, (Vector2){-100, 10}, 0.0f, 0.5f, 12.0f};
+
+    // Tank (Slow, Ring burst)
+    EnemyData tank = {50, patRing, 2.0f, 30.0f, (Vector2){0, 30}, 0.0f, 2.0f, 20.0f};
+
+    // Curve flyway (Flies in, curves away using angularVelocity)
+    EnemyData curvedFlyerR = {15, patCurving, 1.5f, 15.0f, (Vector2){50, 150}, 0.5f, 1.0f, 15.0f};
+    EnemyData curvedFlyerL = {15, patCurving, 1.5f, 15.0f, (Vector2){-50, 150}, -0.5f, 1.0f, 15.0f};
+
+    // Timing Variables
+    float t = 2.0f; // Start at 2 seconds
+
+    // Wave 1: Simple Fodder 1 (0:02 - 0:15)
+    for (int i = 0; i < 5; i++) {
+        Spawn((Vector2){100 + i * 100, -20}, fodder1, t);
+        t += 1.0f;
+    }
+    t += 3.0f;
+    for (int i = 0; i < 5; i++) {
+        Spawn((Vector2){500 - i * 100, -20}, fodder1, t);
+        t += 1.0f;
+    }
+    t += 3.0f;
+
+    // Wave 2: Sweepers (0:15 - 0:30)
+    for (int i = 0; i < 3; i++) {
+        Spawn((Vector2){-20, 50 + i * 40}, sweeperR, t);
+        t += 1.5f;
+    }
+    t += 2.0f;
+    for (int i = 0; i < 3; i++) {
+        Spawn((Vector2){620, 50 + i * 40}, sweeperL, t);
+        t += 1.5f;
+    }
+    t += 4.0f;
+
+    // Wave 3: Curved Flyers + Tank (0:30 - 0:50)
+    Spawn((Vector2){300, -30}, tank, t);
+    t += 2.0f;
+    for (int i = 0; i < 4; i++) {
+        Spawn((Vector2){100, -20}, curvedFlyerR, t);
+        Spawn((Vector2){500, -20}, curvedFlyerL, t);
+        t += 1.5f;
+    }
+    t += 5.0f;
+
+    // Wave 4: Aimed Fodder (0:50 - 1:10)
+    for (int i = 0; i < 8; i++) {
+        float xPos = (i % 2 == 0) ? 150.0f : 450.0f;
+        Spawn((Vector2){xPos, -20}, fodder2, t);
+        t += 1.0f;
+    }
+    t += 4.0f;
+
+    // Wave 5: Sweepers and Fodder 1 together (1:10 - 1:30)
+    for(int i = 0; i < 4; i++) {
+        Spawn((Vector2){-20, 50}, sweeperR, t);
+        Spawn((Vector2){620, 100}, sweeperL, t);
+        Spawn((Vector2){300, -20}, fodder1, t);
+        t += 2.0f;
+    }
+    t += 4.0f;
+
+    // Wave 6: Double Tank + Curved Flyers (1:30 - 1:50)
+    Spawn((Vector2){200, -30}, tank, t);
+    Spawn((Vector2){400, -30}, tank, t);
+    t += 3.0f;
+    for (int i = 0; i < 5; i++) {
+        Spawn((Vector2){150, -20}, curvedFlyerR, t);
+        Spawn((Vector2){450, -20}, curvedFlyerL, t);
+        t += 1.5f;
+    }
+    t += 5.0f;
+
+    // Wave 7: Bullet Hell Primer - lots of spread and rings (1:50 - 2:20)
+    for (int i = 0; i < 10; i++) {
+        float xPos = 100.0f + (GetRandomValue(0, 4) * 100.0f);
+        Spawn((Vector2){xPos, -20}, fodder2, t);
+        
+        if (i % 3 == 0) {
+            Spawn((Vector2){300, -20}, tank, t);
+        }
+        t += 1.5f;
+    }
+    t += 5.0f;
+
+    // Wave 8: Finale before boss - Sweeper barrage (2:20 - 2:40)
+    for (int i = 0; i < 6; i++) {
+        Spawn((Vector2){-20, 40 + i*20}, sweeperR, t);
+        Spawn((Vector2){620, 160 - i*20}, sweeperL, t);
+        t += 1.0f;
+    }
+    t += 8.0f; // Gap before boss (Wait until ~2:50)
+
+    // Ensure we are near 170-180 seconds for the Boss
+    if (t < 170.0f) {
+        t = 170.0f; 
+    }
+
+    // BOSS
+    Boss boss = {0};
+    boss.name = "Mecha-Spider Core";
+    boss.totalPhases = 3;
+    boss.radius = 40.0f;
+    boss.moveMode = BOSS_MOVE_OSCILLATE;
+
+    // Phase 1: Spread and Aim
+    PatternConfig bossPat1 = {5, 200.0f, PI/2, PI/2, 0.5f, 10, BULLET_LINEAR, 0};
+    boss.phases[0] = (SpellCard){
+        .timer = 40.0f,
+        .internalTimer = 0.0f,
+        .pattern = bossPat1,
+        .name = "Phase 1: Spread Fire",
+        .startPos = (Vector2){300, 100},
+        .health = 500,
+        .maxHealth = 500,
+        .shootDelay = 1.0f,
+        .lastShotTime = 0.0f,
+        .isSurvival = false
+    };
+
+    // Phase 2: Ring bursts and curving
+    PatternConfig bossPat2 = {16, 150.0f, PI*2, 0, -0.2f, 10, BULLET_CURVING, 0.5f};
+    boss.phases[1] = (SpellCard){
+        .timer = 40.0f,
+        .internalTimer = 0.0f,
+        .pattern = bossPat2,
+        .name = "Phase 2: Spiral Death",
+        .startPos = (Vector2){300, 150},
+        .health = 800,
+        .maxHealth = 800,
+        .shootDelay = 1.2f,
+        .lastShotTime = 0.0f,
+        .isSurvival = false
+    };
+
+    // Phase 3: Freeze/Aim spam (Survival)
+    PatternConfig bossPat3 = {3, 300.0f, PI/4, PI/2, 1.0f, 10, BULLET_FREEZE, 0};
+    boss.phases[2] = (SpellCard){
+        .timer = 30.0f,
+        .internalTimer = 0.0f,
+        .pattern = bossPat3,
+        .name = "Phase 3: Target Locked",
+        .startPos = (Vector2){300, 100},
+        .health = 1000,
+        .maxHealth = 1000,
+        .shootDelay = 0.5f,
+        .lastShotTime = 0.0f,
+        .isSurvival = true
+    };
+
+    SpawnBossInQueue(boss, t);
 }

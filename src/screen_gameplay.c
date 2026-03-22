@@ -42,6 +42,7 @@
 static int framesCounter = 0;
 static int finishScreen = 0;
 static bool levelPaused = false;
+static float survivalTimer = 0.0f;
 
 //----------------------------------------------------------------------------------
 // Gameplay Screen Functions Definition
@@ -53,6 +54,7 @@ void InitGameplayScreen(void)
     framesCounter = 0;
     finishScreen = 0;
     levelPaused = false;
+    survivalTimer = 0.0f;
     
     InitScore();
     InitItems();
@@ -82,6 +84,17 @@ void UpdateGameplayScreen(void)
     UpdateItems();
     
     ResolveCollisions();
+
+    // Survival points: 100 points per second alive
+    survivalTimer += GetFrameTime();
+    if (survivalTimer >= 1.0f)
+    {
+        AddScore(100);
+        survivalTimer -= 1.0f;
+    }
+
+    // Check for game over
+    if (GetPlayer()->lives < 0) finishScreen = 1;
 
     if (IsKeyPressed(KEY_ENTER))
     {
