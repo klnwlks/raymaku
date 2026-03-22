@@ -146,11 +146,8 @@ void SpawnItems(int count, ItemType type, Vector2 pos, int amount)
             GetRandomValue(pos.y - 15, pos.y + 15)
         };
         
-        // Spread items slightly sideways
-        Vector2 spreadVel = { (float)GetRandomValue(-100, 100), initVelocity.y };
-
         itemPool[itemCount].pos = newpos;
-        itemPool[itemCount].velocity = spreadVel;
+        itemPool[itemCount].velocity = (Vector2) {0, initVelocity.y};
         itemPool[itemCount].type = type;
         itemPool[itemCount].amt = amount;
         itemPool[itemCount].attracted = false;

@@ -56,11 +56,18 @@ void UpdateEnemyPool()
                 int pointItems = (enemies[i].health <= -50) ? 8 : 2; // Reduced point drops
                 int powerItems = 0;
                 
-                if (enemies[i].health <= -10) powerItems = 5; // Elite/Tank (overkilled or high health)
-                else powerItems = 1; // Fodder
+                if (enemies[i].health <= -10) 
+                {
+                    powerItems = 2; // Elite/Tank
+                }
+                else 
+                {
+                    // Fodder: 40% chance for 1 power item
+                    if (GetRandomValue(0, 10) > 6) powerItems = 1;
+                }
                 
                 SpawnItems(pointItems, ITEM_POINT, enemies[i].position, 50);
-                SpawnItems(powerItems, ITEM_POWER, enemies[i].position, 1);
+                if (powerItems > 0) SpawnItems(powerItems, ITEM_POWER, enemies[i].position, 1);
             }
 
             enemies[i] = enemies[enemyCount - 1];

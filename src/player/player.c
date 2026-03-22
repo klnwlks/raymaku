@@ -75,17 +75,17 @@ void UpdatePlayer()
     }
 
     // Update main pattern based on power and focus
-    if (player.power < 20)
+    if (player.power < 40)
     {
-        // Basic 3-way spread
+        // Basic 4-way spread
         float arc = player.focused ? 0.1f : 0.4f;
-        player.pattern = (PatternConfig){ 3, 1000.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+        player.pattern = (PatternConfig){ 4, 1000.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
     }
     else
     {
-        // Advanced 3-way spread with higher speed
-        float arc = player.focused ? 0.05f : 0.6f;
-        player.pattern = (PatternConfig){ 3, 1200.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+        // Advanced 5-way spread (tighter than 4-way when focused)
+        float arc = player.focused ? 0.08f : 0.5f;
+        player.pattern = (PatternConfig){ 5, 1200.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
     }
 
     // Shooting logic

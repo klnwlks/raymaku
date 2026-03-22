@@ -109,30 +109,32 @@ static void DrawUI(void)
     int uiX = PLAY_AREA_X_OFFSET + PLAY_AREA_WIDTH + 20;
     int uiY = 40;
     
-    DrawText("SCORE", uiX, uiY, 20, RAYWHITE);
-    DrawText(TextFormat("%020llu", GetScore()), uiX, uiY + 25, 20, YELLOW);
+    DrawText("SCORE", uiX, uiY, 20, BLACK);
+    DrawText(TextFormat("%020llu", GetScore()), uiX, uiY + 25, 20, BLACK);
     
-    DrawText("HI-SCORE", uiX, uiY + 60, 20, RAYWHITE);
-    DrawText(TextFormat("%020llu", GetHiScore()), uiX, uiY + 85, 20, GOLD);
+    DrawText("HI-SCORE", uiX, uiY + 60, 20, BLACK);
+    DrawText(TextFormat("%020llu", GetHiScore()), uiX, uiY + 85, 20, BLACK);
     
     Player *p = GetPlayer();
-    DrawText("LIVES", uiX, uiY + 130, 20, RAYWHITE);
+    DrawText("LIVES", uiX, uiY + 130, 20, BLACK);
     for (int i = 0; i < p->lives; i++) DrawCircle(uiX + 15 + i * 25, uiY + 160, 10, RED);
     
-    DrawText("BOMBS", uiX, uiY + 190, 20, RAYWHITE);
+    DrawText("BOMBS", uiX, uiY + 190, 20, BLACK);
     for (int i = 0; i < p->bombs; i++) DrawCircle(uiX + 15 + i * 25, uiY + 220, 10, GREEN);
 
-    DrawText("POWER", uiX, uiY + 250, 20, RAYWHITE);
+    DrawText("POWER", uiX, uiY + 250, 20, BLACK);
     DrawText(TextFormat("%d", p->power), uiX, uiY + 275, 20, BLUE);
 
-    DrawText("POINTS", uiX, uiY + 310, 20, RAYWHITE);
+    DrawText("POINTS", uiX, uiY + 310, 20, BLACK);
     DrawText(TextFormat("%d / 200", p->points), uiX, uiY + 335, 20, PINK);
+
+    DrawText("RAYMAKU", uiX, uiY + 390, 40, BLACK);
 }
 
 // Gameplay Screen Draw logic
 void DrawGameplayScreen(void)
 {
-    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), BLACK);
+    DrawRectangle(0, 0, GetScreenWidth(), GetScreenHeight(), WHITE);
     
     // main play area background
     DrawRectangle(PLAY_AREA_X_OFFSET, PLAY_AREA_Y_OFFSET, PLAY_AREA_WIDTH, PLAY_AREA_HEIGHT, ColorAlpha(DARKGRAY, 0.3f));
