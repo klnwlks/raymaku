@@ -71,7 +71,7 @@ void UpdateBoss(void)
     }
 
     // Movement Logic (relative to play area)
-    switch (currBoss.moveMode)
+    switch (current->moveMode)
     {
         case BOSS_MOVE_STATIC:
             break;
@@ -108,7 +108,9 @@ void UpdateBoss(void)
     // Shooting Logic
     if (current->internalTimer - current->lastShotTime >= current->shootDelay)
     {
-        SpawnPattern(current->pattern, BULLET_ENEMY, currBoss.pos, 1, 0.0f, 0.0f);
+        int shots = current->volleyShots > 0 ? current->volleyShots : 1;
+        float vDelay = current->volleyDelay > 0.0f ? current->volleyDelay : 0.0f;
+        SpawnPattern(current->pattern, BULLET_ENEMY, currBoss.pos, shots, 0.0f, vDelay);
         current->lastShotTime = current->internalTimer;
     }
 }

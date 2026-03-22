@@ -41,7 +41,7 @@ void UpdatePlayer()
 
         float currSpeed = player.speed.x;
         player.focused = IsKeyDown(KEY_LEFT_SHIFT);
-        if (player.focused) currSpeed /= 2;
+        if (player.focused) currSpeed /= 1.5;
 
         player.position.x += direction.x * currSpeed;
         player.position.y += direction.y * currSpeed;

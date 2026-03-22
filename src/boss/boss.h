@@ -25,6 +25,9 @@ typedef struct {
     float shootDelay;       // Delay between pattern volleys
     float lastShotTime;
     bool isSurvival;        // If true, phase only ends on timer
+    int volleyShots;        // Number of shots in a multi-volley
+    float volleyDelay;      // Delay between shots in a multi-volley
+    BossMovement moveMode;  // Movement style for this phase
 } SpellCard;
 
 typedef struct {
@@ -35,7 +38,6 @@ typedef struct {
     Vector2 velocity;
     bool active;
     float radius;
-    BossMovement moveMode;
     SpellCard phases[MAX_SPELLS];
 } Boss;
 

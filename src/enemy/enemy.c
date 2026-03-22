@@ -35,7 +35,9 @@ void UpdateEnemyPool()
         enemies[i].currentShootTimer -= dt;
         if (enemies[i].currentShootTimer <= 0.0f)
         {
-            ExecPattern(enemies[i].position, enemies[i].config, BULLET_ENEMY); 
+            int shots = enemies[i].volleyShots > 0 ? enemies[i].volleyShots : 1;
+            float vDelay = enemies[i].volleyDelay > 0.0f ? enemies[i].volleyDelay : 0.0f;
+            SpawnPattern(enemies[i].config, BULLET_ENEMY, enemies[i].position, shots, 0.0f, vDelay); 
             enemies[i].currentShootTimer = enemies[i].shootTimer;
         }
 
@@ -82,7 +84,7 @@ void DrawEnemyPool()
     }
 }
 
-void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity, float lifeTime)
+void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity, float lifeTime, int volleyShots, float volleyDelay)
 {
     if (enemyCount < MAX_ENEMY_COUNT)
     {
@@ -96,6 +98,8 @@ void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, flo
         enemies[enemyCount].angularVelocity = angularVelocity;
         enemies[enemyCount].lifeTime = lifeTime;
         enemies[enemyCount].currentLifeTime = lifeTime;
+        enemies[enemyCount].volleyShots = volleyShots;
+        enemies[enemyCount].volleyDelay = volleyDelay;
         enemyCount++;
     }
 }

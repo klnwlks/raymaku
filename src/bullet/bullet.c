@@ -2,6 +2,7 @@
 #include "../config.h"
 #include "../player/player.h"
 #include "../enemy/enemy.h"
+#include "../boss/boss.h"
 #include "raymath.h"
 #include <stdbool.h>
 #include <stddef.h>
@@ -32,6 +33,7 @@ static void UpdateBulletArray(Bullet *bullets, int *count)
     
     int enemyCount = 0;
     Enemy *enemyPool = GetEnemies(&enemyCount);
+    Boss *boss = GetActiveBoss();
 
     for (int i = 0; i < *count; i++)
     {
@@ -58,8 +60,18 @@ static void UpdateBulletArray(Bullet *bullets, int *count)
                     }
                     else
                     {
-                        // Find nearest enemy
+                        // Find nearest enemy OR BOSS
                         float minDist = FLT_MAX;
+                        
+                        // Check Boss first (if active)
+                        if (boss != NULL && boss->active)
+                        {
+                            minDist = Vector2Distance(b->position, boss->pos);
+                            targetPos = boss->pos;
+                            targetFound = true;
+                        }
+
+                        // Check Enemies
                         for (int j = 0; j < enemyCount; j++)
                         {
                             float dist = Vector2Distance(b->position, enemyPool[j].position);
@@ -71,7 +83,7 @@ static void UpdateBulletArray(Bullet *bullets, int *count)
                             }
                         }
                         
-                        // If no enemies, move slightly towards top of screen
+                        // If no target found, move slightly towards top of screen
                         if (!targetFound)
                         {
                             targetPos = (Vector2){ b->position.x, -100.0f };

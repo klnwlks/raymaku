@@ -29,7 +29,7 @@ void UpdateSpawn(void)
         
         if (item->type == SPAWN_ENEMY)
         {
-            SpawnEnemy(item->pos, item->data.enemy.vel, item->data.enemy.health, item->data.enemy.config, item->data.enemy.shootTimer, item->data.enemy.radius, item->data.enemy.angularVelocity, item->data.enemy.lifeTime);
+            SpawnEnemy(item->pos, item->data.enemy.vel, item->data.enemy.health, item->data.enemy.config, item->data.enemy.shootTimer, item->data.enemy.radius, item->data.enemy.angularVelocity, item->data.enemy.lifeTime, item->data.enemy.volleyShots, item->data.enemy.volleyDelay);
         }
         else if (item->type == SPAWN_BOSS)
         {
@@ -105,21 +105,21 @@ void Stage1(void)
     
     // Base Enemies (EnemyData)
     // Fodder 1 (Straight, basic shot)
-    EnemyData fodder1 = {5, patBasic, 1.0f, 15.0f, (Vector2){0, 120}, 0.0f, 1.0f, 10.0f};
-    
-    // Fodder 2 (Aimed, slower)
-    EnemyData fodder2 = {10, patAimed, 1.5f, 15.0f, (Vector2){0, 80}, 0.0f, 1.0f, 15.0f};
+    EnemyData fodder1 = {10, patBasic, 1.0f, 15.0f, (Vector2){0, 120}, 0.0f, 1.0f, 10.0f, 1, 0.0f};
+
+    // Fodder 2 (Aimed, slower, NOW WITH 3-SHOT VOLLEY)
+    EnemyData fodder2 = {15, patAimed, 1.5f, 15.0f, (Vector2){0, 80}, 0.0f, 1.0f, 15.0f, 3, 0.15f};
 
     // Sweeper (Moves horizontally)
-    EnemyData sweeperR = {15, patSpread, 1.0f, 20.0f, (Vector2){100, 10}, 0.0f, 0.5f, 12.0f};
-    EnemyData sweeperL = {20, patSpread, 1.0f, 20.0f, (Vector2){-100, 10}, 0.0f, 0.5f, 12.0f};
+    EnemyData sweeperR = {20, patSpread, 1.0f, 20.0f, (Vector2){100, 10}, 0.0f, 0.5f, 12.0f, 1, 0.0f};
+    EnemyData sweeperL = {20, patSpread, 1.0f, 20.0f, (Vector2){-100, 10}, 0.0f, 0.5f, 12.0f, 1, 0.0f};
 
-    // Tank (Slow, Ring burst)
-    EnemyData tank = {50, patRing, 2.0f, 30.0f, (Vector2){0, 30}, 0.0f, 2.0f, 20.0f};
+    // Tank (Slow, Ring burst, NOW WITH 2-SHOT VOLLEY)
+    EnemyData tank = {100, patRing, 2.0f, 30.0f, (Vector2){0, 30}, 0.0f, 2.0f, 20.0f, 2, 0.2f};
 
-    // Curve flyway (Flies in, curves away using angularVelocity)
-    EnemyData curvedFlyerR = {15, patCurving, 1.5f, 15.0f, (Vector2){50, 150}, 0.5f, 1.0f, 15.0f};
-    EnemyData curvedFlyerL = {15, patCurving, 1.5f, 15.0f, (Vector2){-50, 150}, -0.5f, 1.0f, 15.0f};
+    // Curve flyway (Flies in, curves away using angularVelocity, 4-SHOT VOLLEY)
+    EnemyData curvedFlyerR = {15, patCurving, 1.5f, 15.0f, (Vector2){50, 150}, 0.5f, 1.0f, 15.0f, 4, 0.1f};
+    EnemyData curvedFlyerL = {15, patCurving, 1.5f, 15.0f, (Vector2){-50, 150}, -0.5f, 1.0f, 15.0f, 4, 0.1f};
 
     // Timing Variables
     float t = 2.0f; // Start at 2 seconds
@@ -204,6 +204,33 @@ void Stage1(void)
         Spawn((Vector2){620, 160 - i*20}, sweeperL, t);
         t += 1.0f;
     }
+    t += 6.0f;
+
+    // Wave 9: Curved flyers swarm (2:00 - 2:20)
+    for (int i = 0; i < 10; i++) {
+        Spawn((Vector2){100 + (i % 3) * 50, -20}, curvedFlyerR, t);
+        Spawn((Vector2){500 - (i % 3) * 50, -20}, curvedFlyerL, t);
+        t += 1.5f;
+    }
+    t += 5.0f;
+
+    // Wave 10: Double Tanks + Fodder Rain (2:20 - 2:35)
+    Spawn((Vector2){200, -30}, tank, t);
+    Spawn((Vector2){400, -30}, tank, t);
+    t += 2.0f;
+    for (int i = 0; i < 12; i++) {
+        Spawn((Vector2){50 + (i % 6) * 100, -20}, fodder1, t);
+        t += 1.0f;
+    }
+    t += 5.0f;
+
+    // Wave 11: The true finale (2:35 - 2:50)
+    Spawn((Vector2){300, -30}, tank, t);
+    for (int i = 0; i < 5; i++) {
+        Spawn((Vector2){-20, 50 + i*20}, sweeperR, t);
+        Spawn((Vector2){620, 150 - i*20}, sweeperL, t);
+        t += 2.0f;
+    }
     t += 8.0f; // Gap before boss (Wait until ~2:50)
 
     // Ensure we are near 170-180 seconds for the Boss
@@ -216,24 +243,26 @@ void Stage1(void)
     boss.name = "Mecha-Spider Core";
     boss.totalPhases = 3;
     boss.radius = 40.0f;
-    boss.moveMode = BOSS_MOVE_OSCILLATE;
 
-    // Phase 1: Spread and Aim
+    // Phase 1: Spread and Aim (Bouncing)
     PatternConfig bossPat1 = {5, 200.0f, PI/2, PI/2, 0.5f, 10, BULLET_LINEAR, 0};
     boss.phases[0] = (SpellCard){
         .timer = 40.0f,
         .internalTimer = 0.0f,
         .pattern = bossPat1,
-        .name = "Phase 1: Spread Fire",
+        .name = "Phase 1: Spread Volley",
         .startPos = (Vector2){300, 100},
-        .health = 500,
-        .maxHealth = 500,
-        .shootDelay = 1.0f,
+        .health = 800,
+        .maxHealth = 800,
+        .shootDelay = 1.5f,
         .lastShotTime = 0.0f,
-        .isSurvival = false
+        .isSurvival = false,
+        .volleyShots = 5,
+        .volleyDelay = 0.1f,
+        .moveMode = BOSS_MOVE_BOUNCE
     };
 
-    // Phase 2: Ring bursts and curving
+    // Phase 2: Ring bursts and curving (Oscillating)
     PatternConfig bossPat2 = {16, 150.0f, PI*2, 0, -0.2f, 10, BULLET_CURVING, 0.5f};
     boss.phases[1] = (SpellCard){
         .timer = 40.0f,
@@ -241,14 +270,17 @@ void Stage1(void)
         .pattern = bossPat2,
         .name = "Phase 2: Spiral Death",
         .startPos = (Vector2){300, 150},
-        .health = 800,
-        .maxHealth = 800,
-        .shootDelay = 1.2f,
+        .health = 1000,
+        .maxHealth = 1000,
+        .shootDelay = 2.0f,
         .lastShotTime = 0.0f,
-        .isSurvival = false
+        .isSurvival = false,
+        .volleyShots = 3,
+        .volleyDelay = 0.2f,
+        .moveMode = BOSS_MOVE_OSCILLATE
     };
 
-    // Phase 3: Freeze/Aim spam (Survival)
+    // Phase 3: Freeze/Aim spam (Survival) (Targets Player)
     PatternConfig bossPat3 = {3, 300.0f, PI/4, PI/2, 1.0f, 10, BULLET_FREEZE, 0};
     boss.phases[2] = (SpellCard){
         .timer = 30.0f,
@@ -256,11 +288,14 @@ void Stage1(void)
         .pattern = bossPat3,
         .name = "Phase 3: Target Locked",
         .startPos = (Vector2){300, 100},
-        .health = 1000,
-        .maxHealth = 1000,
-        .shootDelay = 0.5f,
+        .health = 1500,
+        .maxHealth = 1500,
+        .shootDelay = 1.0f,
         .lastShotTime = 0.0f,
-        .isSurvival = true
+        .isSurvival = true,
+        .volleyShots = 8,
+        .volleyDelay = 0.08f,
+        .moveMode = BOSS_MOVE_TARGET_PLAYER
     };
 
     SpawnBossInQueue(boss, t);
