@@ -50,8 +50,8 @@ void UpdateEnemyPool()
             {
                 AddScore(100);
                 // Spawn some items
-                SpawnItems(1, ITEM_POINT, enemies[i].position, 50);
-                if (GetRandomValue(0, 10) > 8) SpawnItems(1, ITEM_POWER, enemies[i].position, 1);
+                SpawnItems(3, ITEM_POINT, enemies[i].position, 50);
+                if (GetRandomValue(0, 10) > 6) SpawnItems(1, ITEM_POWER, enemies[i].position, 1);
             }
 
             enemies[i] = enemies[enemyCount - 1];
