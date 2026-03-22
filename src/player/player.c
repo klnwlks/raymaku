@@ -158,17 +158,16 @@ void PlayerHit()
         player.lives--;
         
         // Drop some power
-        int dropAmount = player.power / 5; // Drop 20%
-        if (dropAmount > 5) dropAmount = 5; // Max 5 items
+        int dropAmount = player.power / 2; // Drop 50%
+        if (dropAmount > 10) dropAmount = 10; // Max 10 items
         if (dropAmount < 1 && player.power > 0) dropAmount = 1;
-        
+
         if (dropAmount > 0)
         {
             SpawnItems(dropAmount, ITEM_POWER, player.position, 1);
             player.power -= dropAmount;
             if (player.power < 0) player.power = 0;
         }
-
         // Revive in bottom center
         player.position = (Vector2){ PLAY_AREA_WIDTH / 2.0f, PLAY_AREA_HEIGHT * 0.9f };
         player.invincibilityTimer = player.invincibility;

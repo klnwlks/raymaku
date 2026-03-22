@@ -27,8 +27,8 @@ static void NextPhase(void)
 {
     // Bonus for completing phase
     AddScore(1000);
-    SpawnItems(10, ITEM_POINT, currBoss.pos, 100);
-    SpawnItems(5, ITEM_POWER, currBoss.pos, 1);
+    SpawnItems(30, ITEM_POINT, currBoss.pos, 100);
+    SpawnItems(15, ITEM_POWER, currBoss.pos, 1);
 
     currBoss.currPhase++;
     if (currBoss.currPhase >= currBoss.totalPhases)
