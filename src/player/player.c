@@ -38,7 +38,8 @@ void UpdatePlayer()
         direction = Vector2Normalize(direction);
 
         float currSpeed = player.speed.x;
-        if (IsKeyDown(KEY_LEFT_SHIFT)) currSpeed /= 2;
+        player.focused = IsKeyDown(KEY_LEFT_SHIFT);
+        if (player.focused) currSpeed /= 2;
 
         player.position.x += direction.x * currSpeed;
         player.position.y += direction.y * currSpeed;
@@ -54,22 +55,34 @@ void UpdatePlayer()
         player.invincibilityTimer -= GetFrameTime();
     }
 
-    // Update pattern based on power
-    if (player.power < 10)
+    // Power Tiers: 0-19 (0 options), 20-39 (1 option), 40-79 (2 options), 80-127 (3 options), 128+ (4 options)
+    player.activeOptions = player.power / 20;
+    if (player.activeOptions > MAX_OPTIONS) player.activeOptions = MAX_OPTIONS;
+
+    // Update Option Positions based on Focused mode
+    float spread = player.focused ? 20.0f : 40.0f;
+    float heightOffset = player.focused ? 10.0f : 0.0f;
+
+    for (int i = 0; i < player.activeOptions; i++)
     {
-        player.pattern = (PatternConfig){ 1, 800.0f, 0, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+        float angle = (i % 2 == 0) ? -1.0f : 1.0f;
+        float distFactor = ((float) i / 2 + 1);
+        player.optionPos[i].x = player.position.x + (angle * spread * distFactor);
+        player.optionPos[i].y = player.position.y - heightOffset + (player.focused ? 0 : 10.0f * distFactor);
     }
-    else if (player.power < 25)
+
+    // Update main pattern based on power and focus
+    if (player.power < 20)
     {
-        player.pattern = (PatternConfig){ 2, 800.0f, 0.1f, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
-    }
-    else if (player.power < 50)
-    {
-        player.pattern = (PatternConfig){ 3, 850.0f, 0.2f, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+        // Basic 3-way spread
+        float arc = player.focused ? 0.1f : 0.4f;
+        player.pattern = (PatternConfig){ 3, 1000.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
     }
     else
     {
-        player.pattern = (PatternConfig){ 5, 900.0f, 0.4f, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+        // Advanced 3-way spread with higher speed
+        float arc = player.focused ? 0.05f : 0.6f;
+        player.pattern = (PatternConfig){ 3, 1200.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
     }
 
     // Shooting logic
@@ -79,7 +92,16 @@ void UpdatePlayer()
 
     if (player.shooting && player.currentShootTimer <= 0.0f)
     {
+        // Shoot from main player
         ExecPattern(player.position, player.pattern, BULLET_PLAYER);
+        
+        // Shoot from active options
+        PatternConfig optPattern = { 1, 900.0f, 0, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+        for (int i = 0; i < player.activeOptions; i++)
+        {
+            ExecPattern(player.optionPos[i], optPattern, BULLET_PLAYER);
+        }
+
         player.currentShootTimer = player.shootTimer;
     }
 }
@@ -92,8 +114,20 @@ void DrawPlayer()
         player.position.y + PLAY_AREA_Y_OFFSET
     };
 
-    DrawCircleV(screenPos, player.radius, RED);
+    // Draw Options
+    for (int i = 0; i < player.activeOptions; i++)
+    {
+        DrawCircleV((Vector2){player.optionPos[i].x + PLAY_AREA_X_OFFSET, player.optionPos[i].y + PLAY_AREA_Y_OFFSET}, 5.0f, ORANGE);
+        DrawCircleLines(player.optionPos[i].x + PLAY_AREA_X_OFFSET, player.optionPos[i].y + PLAY_AREA_Y_OFFSET, 6.0f, WHITE);
+    }
 
+    DrawCircleV(screenPos, player.radius, RED);
+    
+    // Draw Hitbox (visual feedback for shift/focus)
+    if (player.focused)
+    {
+        DrawCircleV(screenPos, 3.0f, WHITE);
+    }
 }
 
 void PlayerHit()

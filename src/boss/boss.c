@@ -3,6 +3,7 @@
 #include "../player/player.h"
 #include "../score/score.h"
 #include "../item/item.h"
+#include "../config.h"
 #include <string.h>
 
 static Boss currBoss = {0};
@@ -19,7 +20,7 @@ void SpawnBoss(Boss data)
     currBoss.active = true;
     currBoss.currPhase = 0;
     currBoss.pos = currBoss.phases[0].startPos;
-    currBoss.velocity = (Vector2){150.0f, 0.0f}; // Default horizontal speed
+    currBoss.velocity = (Vector2){150.0f, 100.0f}; // Default speed
 }
 
 static void NextPhase(void)
@@ -69,14 +70,14 @@ void UpdateBoss(void)
         if (!currBoss.active) return;
     }
 
-    // Movement Logic
+    // Movement Logic (relative to play area)
     switch (currBoss.moveMode)
     {
         case BOSS_MOVE_STATIC:
             break;
         case BOSS_MOVE_OSCILLATE:
             currBoss.pos.x += currBoss.velocity.x * dt;
-            if (currBoss.pos.x > GetScreenWidth() - 100 || currBoss.pos.x < 100)
+            if (currBoss.pos.x > PLAY_AREA_WIDTH - 100 || currBoss.pos.x < 100)
             {
                 currBoss.velocity.x *= -1.0f;
             }
@@ -84,7 +85,7 @@ void UpdateBoss(void)
         case BOSS_MOVE_BOUNCE:
             currBoss.pos.x += currBoss.velocity.x * dt;
             currBoss.pos.y += currBoss.velocity.y * dt;
-            if (currBoss.pos.x > GetScreenWidth() - 50 || currBoss.pos.x < 50) currBoss.velocity.x *= -1.0f;
+            if (currBoss.pos.x > PLAY_AREA_WIDTH - 50 || currBoss.pos.x < 50) currBoss.velocity.x *= -1.0f;
             if (currBoss.pos.y > 300 || currBoss.pos.y < 50) currBoss.velocity.y *= -1.0f;
             break;
         case BOSS_MOVE_TARGET_PLAYER:
@@ -98,10 +99,15 @@ void UpdateBoss(void)
         }
     }
 
+    // Global Clamping to Play Area
+    if (currBoss.pos.x < currBoss.radius) currBoss.pos.x = currBoss.radius;
+    if (currBoss.pos.x > PLAY_AREA_WIDTH - currBoss.radius) currBoss.pos.x = PLAY_AREA_WIDTH - currBoss.radius;
+    if (currBoss.pos.y < currBoss.radius) currBoss.pos.y = currBoss.radius;
+    if (currBoss.pos.y > PLAY_AREA_HEIGHT - currBoss.radius) currBoss.pos.y = PLAY_AREA_HEIGHT - currBoss.radius;
+
     // Shooting Logic
     if (current->internalTimer - current->lastShotTime >= current->shootDelay)
     {
-        // Spawning a multi-volley pattern (single volley for now, but using the pool)
         SpawnPattern(current->pattern, BULLET_ENEMY, currBoss.pos, 1, 0.0f, 0.0f);
         current->lastShotTime = current->internalTimer;
     }
@@ -111,21 +117,27 @@ void DrawBoss(void)
 {
     if (!currBoss.active) return;
 
-    // Draw Boss Body
-    DrawCircleV(currBoss.pos, currBoss.radius, PURPLE);
-    DrawCircleLines(currBoss.pos.x, currBoss.pos.y, currBoss.radius + 2.0f, WHITE);
+    Vector2 screenPos = {
+        currBoss.pos.x + PLAY_AREA_X_OFFSET,
+        currBoss.pos.y + PLAY_AREA_Y_OFFSET
+    };
 
-    // Draw Health/Time Indicator (Simple for now)
+    // Draw Boss Body
+    DrawCircleV(screenPos, currBoss.radius, PURPLE);
+    DrawCircleLines(screenPos.x, screenPos.y, currBoss.radius + 2.0f, WHITE);
+
+    // Draw Health/Time Indicator
     SpellCard *current = &currBoss.phases[currBoss.currPhase];
     float ratio = current->isSurvival ? 
         (1.0f - current->internalTimer / current->timer) : 
         ((float)current->health / (float)current->maxHealth);
     
-    DrawRectangle(10, 10, (GetScreenWidth() - 20) * ratio, 10, RED);
-    DrawText(current->name, 10, 25, 20, RAYWHITE);
+    DrawRectangle(PLAY_AREA_X_OFFSET, 10, (PLAY_AREA_WIDTH) * ratio, 10, RED);
+    DrawText(current->name, PLAY_AREA_X_OFFSET, 25, 20, RAYWHITE);
 }
 
 Boss *GetActiveBoss(void)
 {
     return &currBoss;
 }
+

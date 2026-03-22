@@ -66,9 +66,13 @@ void DrawEnemyPool()
 {
     for (int i = 0; i < enemyCount; i++)
     {
-        DrawCircle(enemies[i].position.x + PLAY_AREA_X_OFFSET, enemies[i].position.y + PLAY_AREA_Y_OFFSET, enemies[i].radius, RED);
+        // Only draw if within play area bounds
+        if (enemies[i].position.x >= 0 && enemies[i].position.x <= PLAY_AREA_WIDTH &&
+            enemies[i].position.y >= 0 && enemies[i].position.y <= PLAY_AREA_HEIGHT)
+        {
+            DrawCircle(enemies[i].position.x + PLAY_AREA_X_OFFSET, enemies[i].position.y + PLAY_AREA_Y_OFFSET, enemies[i].radius, RED);
+        }
     }
-
 }
 
 void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity, float lifeTime)

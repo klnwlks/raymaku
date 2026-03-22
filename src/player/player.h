@@ -5,6 +5,8 @@
 #include <stdbool.h>
 #include "../pattern/pattern.h"
 
+#define MAX_OPTIONS 4
+
 // player struct
 typedef struct {
     Vector2 position;
@@ -17,9 +19,14 @@ typedef struct {
     int points;
     float invincibility;
     bool shooting;
+    bool focused; // holding shift
     PatternConfig pattern;
     float shootTimer;
     float currentShootTimer;
+    
+    // Options (drones)
+    Vector2 optionPos[MAX_OPTIONS];
+    int activeOptions;
 } Player;
 
 // function prototypes for player movement and shooting

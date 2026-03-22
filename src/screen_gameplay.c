@@ -99,7 +99,7 @@ void UpdateGameplayScreen(void)
         testBoss.phases[0].maxHealth = 500;
         testBoss.phases[0].timer = 30.0f;
         testBoss.phases[0].shootDelay = 1.0f;
-        testBoss.phases[0].startPos = (Vector2){ PLAY_AREA_X_OFFSET + PLAY_AREA_WIDTH/2, 150 };
+        testBoss.phases[0].startPos = (Vector2){ PLAY_AREA_WIDTH/2, 150 };
         testBoss.phases[0].pattern = (PatternConfig){ 16, 200.0f, 2.0f * PI, 0, 0, 1, BULLET_LINEAR, 0 };
 
         // Phase 2: Survival Spiral
@@ -107,7 +107,7 @@ void UpdateGameplayScreen(void)
         testBoss.phases[1].isSurvival = true;
         testBoss.phases[1].timer = 15.0f;
         testBoss.phases[1].shootDelay = 0.1f;
-        testBoss.phases[1].startPos = (Vector2){ PLAY_AREA_X_OFFSET + PLAY_AREA_WIDTH/2, 150 };
+        testBoss.phases[1].startPos = (Vector2){ PLAY_AREA_WIDTH/2, 150 };
         testBoss.phases[1].pattern = (PatternConfig){ 1, 300.0f, 0, 0, 10.0f, 1, BULLET_LINEAR, 0 };
 
         SpawnBoss(testBoss);
