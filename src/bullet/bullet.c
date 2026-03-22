@@ -1,6 +1,9 @@
 #include "bullet.h"
 #include "../config.h"
+#include "../player/player.h"
+#include "raymath.h"
 #include <stdbool.h>
+#include <stddef.h>
 
 #define MAX_PLAYER_BULLETS 500
 #define MAX_ENEMY_BULLETS 5000
@@ -23,21 +26,99 @@ void InitBulletPools(void)
 static void UpdateBulletArray(Bullet *bullets, int *count)
 {
     float dt = GetFrameTime();
+    Player *player = GetPlayer();
     
     for (int i = 0; i < *count; i++)
     {
-        // 1. Update Physics
-        bullets[i].velocity.x += bullets[i].acceleration.x * dt;
-        bullets[i].velocity.y += bullets[i].acceleration.y * dt;
+        Bullet *b = &bullets[i];
         
-        bullets[i].position.x += bullets[i].velocity.x * dt;
-        bullets[i].position.y += bullets[i].velocity.y * dt;
+        // 1. Update based on behavior
+        switch (b->behavior)
+        {
+            case BULLET_LINEAR:
+                // Normal physics
+                b->velocity.x += b->acceleration.x * dt;
+                b->velocity.y += b->acceleration.y * dt;
+                break;
 
-        // 2. Boundary Check (with 100px buffer)
-        bool offScreen = (bullets[i].position.x < -100 || 
-                          bullets[i].position.x > PLAY_AREA_WIDTH + 100 ||
-                          bullets[i].position.y < -100 || 
-                          bullets[i].position.y > PLAY_AREA_HEIGHT + 100);
+            case BULLET_HOMING:
+                {
+                    // Track player position
+                    Vector2 toPlayer = Vector2Subtract(player->position, b->position);
+                    float targetAngle = atan2f(toPlayer.y, toPlayer.x);
+                    float currentAngle = atan2f(b->velocity.y, b->velocity.x);
+                    
+                    // Normalize angles and get the difference
+                    float angleDiff = targetAngle - currentAngle;
+                    while (angleDiff > PI) angleDiff -= 2.0f * PI;
+                    while (angleDiff < -PI) angleDiff += 2.0f * PI;
+                    
+                    // Rotate velocity vector toward player
+                    float rotation = b->rotationSpeed * dt;
+                    if (fabsf(angleDiff) < rotation)
+                    {
+                        currentAngle = targetAngle;
+                    }
+                    else
+                    {
+                        currentAngle += (angleDiff > 0) ? rotation : -rotation;
+                    }
+                    
+                    b->velocity.x = cosf(currentAngle) * b->speed;
+                    b->velocity.y = sinf(currentAngle) * b->speed;
+                }
+                break;
+
+            case BULLET_CURVING:
+                {
+                    float currentAngle = atan2f(b->velocity.y, b->velocity.x);
+                    currentAngle += b->rotationSpeed * dt;
+                    
+                    b->velocity.x = cosf(currentAngle) * b->speed;
+                    b->velocity.y = sinf(currentAngle) * b->speed;
+                }
+                break;
+
+            case BULLET_FREEZE:
+                {
+                    b->timer -= dt;
+                    
+                    if (b->state == STATE_ACTIVE)
+                    {
+                        if (b->timer <= 0.0f)
+                        {
+                            b->state = STATE_FROZEN;
+                            b->velocity = (Vector2){ 0, 0 };
+                            b->timer = 0.5f; // Freeze duration
+                        }
+                    }
+                    else if (b->state == STATE_FROZEN)
+                    {
+                        if (b->timer <= 0.0f)
+                        {
+                            b->state = STATE_LOCKED;
+                            // Re-aim at player
+                            Vector2 toPlayer = Vector2Subtract(player->position, b->position);
+                            float angle = atan2f(toPlayer.y, toPlayer.x);
+                            b->velocity.x = cosf(angle) * b->speed;
+                            b->velocity.y = sinf(angle) * b->speed;
+                            b->state = STATE_ACTIVE; // Back to active movement
+                            b->behavior = BULLET_LINEAR; // Keep moving straight after re-aim
+                        }
+                    }
+                }
+                break;
+        }
+        
+        // 2. Apply movement
+        b->position.x += b->velocity.x * dt;
+        b->position.y += b->velocity.y * dt;
+
+        // 3. Boundary Check (with 100px buffer)
+        bool offScreen = (b->position.x < -100 || 
+                          b->position.x > PLAY_AREA_WIDTH + 100 ||
+                          b->position.y < -100 || 
+                          b->position.y > PLAY_AREA_HEIGHT + 100);
 
         if (offScreen)
         {
@@ -70,18 +151,15 @@ void DrawBulletPools(void)
     }
 }
 
-// TODO: DIFFFERENT BULLET TYPES
-void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner owner)
+void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner owner, BulletBehavior behavior, float speed, float rotationSpeed)
 {
+    Bullet *b = NULL;
+    
     if (owner == BULLET_PLAYER)
     {
         if (playerBulletCount < MAX_PLAYER_BULLETS)
         {
-            playerBullets[playerBulletCount].position = pos;
-            playerBullets[playerBulletCount].velocity = vel;
-            playerBullets[playerBulletCount].acceleration = accel;
-            playerBullets[playerBulletCount].radius = 4.0f;
-            playerBullets[playerBulletCount].power = power;
+            b = &playerBullets[playerBulletCount];
             playerBulletCount++;
         }
     }
@@ -89,13 +167,23 @@ void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner
     {
         if (enemyBulletCount < MAX_ENEMY_BULLETS)
         {
-            enemyBullets[enemyBulletCount].position = pos;
-            enemyBullets[enemyBulletCount].velocity = vel;
-            enemyBullets[enemyBulletCount].acceleration = accel;
-            enemyBullets[enemyBulletCount].radius = 6.0f;
-            enemyBullets[enemyBulletCount].power = 1;
+            b = &enemyBullets[enemyBulletCount];
             enemyBulletCount++;
         }
+    }
+    
+    if (b != NULL)
+    {
+        b->position = pos;
+        b->velocity = vel;
+        b->acceleration = accel;
+        b->radius = (owner == BULLET_PLAYER) ? 4.0f : 6.0f;
+        b->power = power;
+        b->behavior = behavior;
+        b->state = STATE_ACTIVE;
+        b->timer = (behavior == BULLET_FREEZE) ? 0.3f : 0.0f; // Time to move before freeze
+        b->speed = (speed == 0.0f) ? Vector2Length(vel) : speed;
+        b->rotationSpeed = rotationSpeed;
     }
 }
 
@@ -110,7 +198,6 @@ void RemoveBullet(int index, BulletOwner owner)
     {
         playerBullets[index] = playerBullets[playerBulletCount - 1];
         playerBulletCount--;
-
     }
 }
 

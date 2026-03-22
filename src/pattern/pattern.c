@@ -32,7 +32,7 @@ void ExecPattern(Vector2 pos, PatternConfig pat, BulletOwner owner)
         };
       
         // spawn the bullet
-        SpawnBullet(pos, velocity, (Vector2){0,0}, pat.power,  owner);
+        SpawnBullet(pos, velocity, (Vector2){0,0}, pat.power, owner, pat.behavior, pat.speed, pat.rotationSpeed);
     }
 }
 
@@ -51,6 +51,10 @@ void UpdatePatterns()
     for (int i = 0; i < activePatterns; i++)
     {
         patternPool[i].timer += dt;
+        
+        // Update spin if applicable
+        patternPool[i].config.angleOffset += patternPool[i].config.spin * dt;
+        
         if (patternPool[i].timer >= patternPool[i].shotDelay) 
         {
             ExecPattern(patternPool[i].origin, patternPool[i].config, patternPool[i].owner);
@@ -69,9 +73,10 @@ void UpdatePatterns()
 }
 
 // create new pattern and add to pool
-// TODO: ADD INSTANCING OF UNIQUE BULLET TYPES
 void SpawnPattern(PatternConfig config, BulletOwner owner, Vector2 pos, int shots, float timer, float shotDelay)
 {
+    if (activePatterns >= MAX_PATTERNS) return;
+    
     patternPool[activePatterns].config = config;
     patternPool[activePatterns].owner = owner;
     patternPool[activePatterns].origin = pos;

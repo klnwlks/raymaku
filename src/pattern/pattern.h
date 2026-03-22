@@ -7,10 +7,12 @@
 typedef struct {
     int bulletCount; // how many bullets in one shot
     float speed;
-    int arc; // in rad
-    int angleOffset; // starting direction
-    int spin; // if it will spin
+    float arc; // in rad
+    float angleOffset; // starting direction
+    float spin; // if it will spin
     int power; // attack power
+    BulletBehavior behavior;
+    float rotationSpeed;
 } PatternConfig;
 
 // for multivolley

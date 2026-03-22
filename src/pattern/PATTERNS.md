@@ -84,4 +84,14 @@ Extend the `Bullet` struct in `bullet.h`:
 
 ---
 
-*Note: Refer to `CONVENTIONS.md` for naming and initialization standards when implementing these features.*
+## 5. Implementation Status
+The following bullet types have been implemented:
+- **BULLET_LINEAR**: Standard straight-line movement using velocity and acceleration.
+- **BULLET_HOMING**: Tracks the player's position, rotating its velocity vector toward the player at a set `rotationSpeed`.
+- **BULLET_CURVING**: Constant angular rotation applied to the velocity vector.
+- **BULLET_FREEZE**: State-based movement that moves, stops, re-aims at the player, and then launches as a linear bullet.
+
+### Structural Updates
+- `Bullet` struct extended with `behavior`, `state`, `timer`, `speed`, and `rotationSpeed`.
+- `PatternConfig` extended to support these new behaviors and rotation speeds.
+- `SpawnBullet` and `ExecPattern` updated to pass through these new parameters.
