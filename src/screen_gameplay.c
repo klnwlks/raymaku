@@ -87,10 +87,10 @@ void UpdateGameplayScreen(void)
 
     // Survival points: 100 points per second alive
     survivalTimer += GetFrameTime();
-    if (survivalTimer >= 1.0f)
+    if (survivalTimer >= 0.1f)
     {
-        AddScore(100);
-        survivalTimer -= 1.0f;
+        AddScore(1);
+        survivalTimer -= 0.1f;
     }
 
     // Check for game over
@@ -124,6 +124,9 @@ static void DrawUI(void)
 
     DrawText("POWER", uiX, uiY + 250, 20, RAYWHITE);
     DrawText(TextFormat("%d", p->power), uiX, uiY + 275, 20, BLUE);
+
+    DrawText("POINTS", uiX, uiY + 310, 20, RAYWHITE);
+    DrawText(TextFormat("%d / 200", p->points), uiX, uiY + 335, 20, PINK);
 }
 
 // Gameplay Screen Draw logic

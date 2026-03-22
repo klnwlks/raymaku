@@ -53,11 +53,11 @@ void UpdateEnemyPool()
             {
                 AddScore(100);
                 // Guaranteed power for all, more for tougher enemies
-                int pointItems = (enemies[i].health <= -50) ? 15 : 5; // Increased point drops
+                int pointItems = (enemies[i].health <= -50) ? 8 : 2; // Reduced point drops
                 int powerItems = 0;
                 
                 if (enemies[i].health <= -10) powerItems = 5; // Elite/Tank (overkilled or high health)
-                else powerItems = 1; // Fodder (now guaranteed 2 power items)
+                else powerItems = 1; // Fodder
                 
                 SpawnItems(pointItems, ITEM_POINT, enemies[i].position, 50);
                 SpawnItems(powerItems, ITEM_POWER, enemies[i].position, 1);

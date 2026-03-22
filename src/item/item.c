@@ -67,6 +67,12 @@ void RemoveItem(int index, ItemType type)
             break;
         case ITEM_POINT:
             AddScore(amt); 
+            player->points++;
+            if (player->points >= 200)
+            {
+                player->lives++;
+                player->points = 0;
+            }
             break;
         case ITEM_POWER:
             player->power += amt;

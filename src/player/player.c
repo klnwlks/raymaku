@@ -15,6 +15,7 @@ void InitPlayer()
     player.pickupRadius = 24.0f; // Generous item pickup radius
     player.lives = 3;
     player.bombs = 5;
+    player.points = 0;
     player.invincibility = 2.5f; // Increased for recovery
     player.invincibilityTimer = 0.0f;
     player.shooting = false;
