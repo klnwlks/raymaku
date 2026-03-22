@@ -10,9 +10,9 @@
 static Item itemPool[MAX_ITEMS];
 static int itemCount = 0;
 
-// items pop up and fall down
-static float gravity = 400.0f;
-static Vector2 initVelocity = {0.0f, -250.0f};
+// items pop up and fall down slowly
+static float gravity = 90.0f;
+static Vector2 initVelocity = {0.0f, -90.0f};
 
 void InitItems()
 {
@@ -27,6 +27,10 @@ void DrawItems()
 {
     for (int i = 0; i < itemCount; i++) 
     {
+        // Don't draw if outside play area
+        if (itemPool[i].pos.x < 0 || itemPool[i].pos.x > PLAY_AREA_WIDTH ||
+            itemPool[i].pos.y < 0 || itemPool[i].pos.y > PLAY_AREA_HEIGHT) continue;
+
         // draw different colors for different types
         Color itemColor = WHITE;
         switch(itemPool[i].type)

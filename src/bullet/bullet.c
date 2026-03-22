@@ -141,12 +141,20 @@ void DrawBulletPools(void)
     // Draw Player Bullets (Blue)
     for (int i = 0; i < playerBulletCount; i++)
     {
+        // Don't draw if outside play area
+        if (playerBullets[i].position.x < 0 || playerBullets[i].position.x > PLAY_AREA_WIDTH ||
+            playerBullets[i].position.y < 0 || playerBullets[i].position.y > PLAY_AREA_HEIGHT) continue;
+
         DrawCircle(playerBullets[i].position.x + PLAY_AREA_X_OFFSET, playerBullets[i].position.y + PLAY_AREA_Y_OFFSET, playerBullets[i].radius, SKYBLUE);
     }
 
     // Draw Enemy Bullets (Red)
     for (int i = 0; i < enemyBulletCount; i++)
     {
+        // Don't draw if outside play area
+        if (enemyBullets[i].position.x < 0 || enemyBullets[i].position.x > PLAY_AREA_WIDTH ||
+            enemyBullets[i].position.y < 0 || enemyBullets[i].position.y > PLAY_AREA_HEIGHT) continue;
+
         DrawCircle(enemyBullets[i].position.x + PLAY_AREA_X_OFFSET, enemyBullets[i].position.y + PLAY_AREA_Y_OFFSET, enemyBullets[i].radius, RED);
     }
 }
