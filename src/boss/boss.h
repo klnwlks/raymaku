@@ -6,6 +6,7 @@
 #include <stdbool.h>
 
 #define MAX_SPELLS 10
+#define MAX_BOSS_OPTIONS 4
 
 typedef enum {
     BOSS_MOVE_STATIC,
@@ -13,6 +14,29 @@ typedef enum {
     BOSS_MOVE_BOUNCE,
     BOSS_MOVE_TARGET_PLAYER
 } BossMovement;
+
+typedef enum {
+    BOSS_OPTION_MOVE_STATIC,
+    BOSS_OPTION_MOVE_ROTATE
+} BossOptionMovement;
+
+typedef struct {
+    bool active;
+    Vector2 offset;             // Base offset from boss
+    float angle;                // Current angle (for rotation)
+    BossOptionMovement moveMode;
+    float moveSpeed;            // Rotation speed in radians/sec
+    
+    PatternConfig pattern;
+    float shootDelay;
+    float lastShotTime;
+    int maxShots;               // Destroyed after this many shots (if > 0)
+    int shotsFired;
+    int volleyShots;
+    float volleyDelay;
+    
+    Vector2 currentPos;         // Computed current position
+} BossOption;
 
 typedef struct {
     float timer;            // Time limit for this phase
@@ -28,6 +52,7 @@ typedef struct {
     int volleyShots;        // Number of shots in a multi-volley
     float volleyDelay;      // Delay between shots in a multi-volley
     BossMovement moveMode;  // Movement style for this phase
+    BossOption options[MAX_BOSS_OPTIONS]; // Boss options/drones
 } SpellCard;
 
 typedef struct {

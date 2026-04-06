@@ -257,6 +257,8 @@ void Stage1(void)
 
     // Phase 1: Spread and Aim (Bouncing)
     PatternConfig bossPat1 = {5, 200.0f, PI/2, PI/2, 0.5f, 10, BULLET_LINEAR, 0, 0.0f, false};
+    PatternConfig optionPat1 = {3, 150.0f, PI, PI/2, 0, 5, BULLET_LINEAR, 0, 0.0f, false};
+
     boss.phases[0] = (SpellCard){
         .timer = 40.0f,
         .internalTimer = 0.0f,
@@ -270,7 +272,37 @@ void Stage1(void)
         .isSurvival = false,
         .volleyShots = 5,
         .volleyDelay = 0.1f,
-        .moveMode = BOSS_MOVE_BOUNCE
+        .moveMode = BOSS_MOVE_BOUNCE,
+        .options = {
+            [0] = {
+                .active = true,
+                .offset = (Vector2){-60, 0},
+                .angle = 0,
+                .moveMode = BOSS_OPTION_MOVE_ROTATE,
+                .moveSpeed = 2.0f,
+                .pattern = optionPat1,
+                .shootDelay = 2.5f,
+                .lastShotTime = 0.0f,
+                .maxShots = 5, // Dies after 5 volleys
+                .shotsFired = 0,
+                .volleyShots = 3,
+                .volleyDelay = 0.15f
+            },
+            [1] = {
+                .active = true,
+                .offset = (Vector2){60, 0},
+                .angle = PI,
+                .moveMode = BOSS_OPTION_MOVE_ROTATE,
+                .moveSpeed = 2.0f,
+                .pattern = optionPat1,
+                .shootDelay = 2.5f,
+                .lastShotTime = 0.0f,
+                .maxShots = 5, // Dies after 5 volleys
+                .shotsFired = 0,
+                .volleyShots = 3,
+                .volleyDelay = 0.15f
+            }
+        }
     };
 
     // Phase 2: Ring bursts and curving (Oscillating)

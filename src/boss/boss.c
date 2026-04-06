@@ -5,6 +5,7 @@
 #include "../item/item.h"
 #include "../config.h"
 #include <string.h>
+#include <math.h>
 
 static Boss currBoss = {0};
 
@@ -113,6 +114,43 @@ void UpdateBoss(void)
         SpawnPattern(current->pattern, BULLET_ENEMY, currBoss.pos, shots, 0.0f, vDelay);
         current->lastShotTime = current->internalTimer;
     }
+    
+    // Options Logic
+    for (int i = 0; i < MAX_BOSS_OPTIONS; i++)
+    {
+        BossOption *opt = &current->options[i];
+        if (!opt->active) continue;
+
+        // Update Position
+        if (opt->moveMode == BOSS_OPTION_MOVE_STATIC)
+        {
+            opt->currentPos.x = currBoss.pos.x + opt->offset.x;
+            opt->currentPos.y = currBoss.pos.y + opt->offset.y;
+        }
+        else if (opt->moveMode == BOSS_OPTION_MOVE_ROTATE)
+        {
+            opt->angle += opt->moveSpeed * dt;
+            float s = sinf(opt->angle);
+            float c = cosf(opt->angle);
+            opt->currentPos.x = currBoss.pos.x + (opt->offset.x * c - opt->offset.y * s);
+            opt->currentPos.y = currBoss.pos.y + (opt->offset.x * s + opt->offset.y * c);
+        }
+
+        // Shooting
+        if (current->internalTimer - opt->lastShotTime >= opt->shootDelay)
+        {
+            int shots = opt->volleyShots > 0 ? opt->volleyShots : 1;
+            float vDelay = opt->volleyDelay > 0.0f ? opt->volleyDelay : 0.0f;
+            SpawnPattern(opt->pattern, BULLET_ENEMY, opt->currentPos, shots, 0.0f, vDelay);
+            opt->lastShotTime = current->internalTimer;
+            
+            opt->shotsFired++;
+            if (opt->maxShots > 0 && opt->shotsFired >= opt->maxShots)
+            {
+                opt->active = false;
+            }
+        }
+    }
 }
 
 void DrawBoss(void)
@@ -124,12 +162,28 @@ void DrawBoss(void)
         currBoss.pos.y + PLAY_AREA_Y_OFFSET
     };
 
+    SpellCard *current = &currBoss.phases[currBoss.currPhase];
+
+    // Draw Options
+    for (int i = 0; i < MAX_BOSS_OPTIONS; i++)
+    {
+        BossOption *opt = &current->options[i];
+        if (!opt->active) continue;
+        
+        Vector2 optScreenPos = {
+            opt->currentPos.x + PLAY_AREA_X_OFFSET,
+            opt->currentPos.y + PLAY_AREA_Y_OFFSET
+        };
+        
+        DrawCircleV(optScreenPos, 12.0f, DARKPURPLE);
+        DrawCircleLines(optScreenPos.x, optScreenPos.y, 14.0f, WHITE);
+    }
+
     // Draw Boss Body
     DrawCircleV(screenPos, currBoss.radius, PURPLE);
     DrawCircleLines(screenPos.x, screenPos.y, currBoss.radius + 2.0f, WHITE);
 
     // Draw Health/Time Indicator
-    SpellCard *current = &currBoss.phases[currBoss.currPhase];
     float ratio = current->isSurvival ? 
         (1.0f - current->internalTimer / current->timer) : 
         ((float)current->health / (float)current->maxHealth);
