@@ -13,6 +13,7 @@ void InitPlayer()
     player.speed = (Vector2) {4.0f, 4.0f};
     player.radius = 3.0f; // Small death hitbox
     player.pickupRadius = 12.0f; // Generous item pickup radius
+    player.grazeRadius = player.radius + 9.0f;
     player.lives = 3;
     player.bombs = 5;
     player.points = 0;
@@ -37,13 +38,12 @@ void UpdatePlayer()
     if (IsKeyDown(KEY_UP)) direction.y -= 1.0f;
     if (IsKeyDown(KEY_DOWN)) direction.y += 1.0f;
 
+    float currSpeed = player.speed.x;
+    player.focused = IsKeyDown(KEY_LEFT_SHIFT);
+    if (player.focused) currSpeed /= 1.5;
+
     if ((direction.x != 0) || (direction.y != 0)) {
         direction = Vector2Normalize(direction);
-
-        float currSpeed = player.speed.x;
-        player.focused = IsKeyDown(KEY_LEFT_SHIFT);
-        if (player.focused) currSpeed /= 1.5;
-
         player.position.x += direction.x * currSpeed;
         player.position.y += direction.y * currSpeed;
     }
