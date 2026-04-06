@@ -96,11 +96,6 @@ void UpdateGameplayScreen(void)
     // Check for game over
     if (GetPlayer()->lives < 0) finishScreen = 1;
 
-    if (IsKeyPressed(KEY_ENTER))
-    {
-        finishScreen = 1;
-        PlaySound(fxCoin);
-    }
 }
 
 // Helper to draw UI
