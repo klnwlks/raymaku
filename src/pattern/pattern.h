@@ -13,6 +13,8 @@ typedef struct {
     int power; // attack power
     BulletBehavior behavior;
     float rotationSpeed;
+    float jitter;       // Random angle offset in radians
+    bool aimAtPlayer;   // If true, re-calculate angleOffset towards player when spawned
 } PatternConfig;
 
 // for multivolley

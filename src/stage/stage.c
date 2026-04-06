@@ -97,11 +97,12 @@ void Stage1(void)
     ClearStage();
 
     // Base Patterns
-    PatternConfig patBasic = {1, 250.0f, 0, PI/2, 0, 10, BULLET_LINEAR, 0};
-    PatternConfig patAimed = {1, 200.0f, 0, PI/2, 0, 10, BULLET_FREEZE, 0}; // Starts straight, freezes, aims
-    PatternConfig patSpread = {3, 200.0f, PI/4, PI/2, 0, 10, BULLET_LINEAR, 0};
-    PatternConfig patRing = {8, 150.0f, PI*2, 0, 0, 10, BULLET_LINEAR, 0};
-    PatternConfig patCurving = {2, 150.0f, PI/6, PI/2, 0, 10, BULLET_CURVING, 1.5f}; // curves outward
+    PatternConfig patBasic = {1, 250.0f, 0, PI/2, 0, 10, BULLET_LINEAR, 0, 0.0f, false};
+    PatternConfig patAimed = {1, 200.0f, 0, PI/2, 0, 10, BULLET_FREEZE, 0, 0.0f, false}; // Starts straight, freezes, aims
+    PatternConfig patSpread = {3, 200.0f, PI/4, PI/2, 0, 10, BULLET_LINEAR, 0, 0.0f, false};
+    PatternConfig patRing = {8, 150.0f, PI*2, 0, 0, 10, BULLET_LINEAR, 0, 0.0f, false};
+    PatternConfig patCurving = {2, 150.0f, PI/6, PI/2, 0, 10, BULLET_CURVING, 1.5f, 0.0f, false}; // curves outward
+    PatternConfig patBarrage = {1, 300.0f, 0, 0, 0, 10, BULLET_LINEAR, 0, 0.15f, true};
     
     // Base Enemies (EnemyData)
     // Fodder 1 (Straight, basic shot)
@@ -109,6 +110,9 @@ void Stage1(void)
 
     // Fodder 2 (Aimed, slower, NOW WITH 3-SHOT VOLLEY)
     EnemyData fodder2 = {15, patAimed, 1.5f, 15.0f, (Vector2){0, 80}, 0.0f, 1.0f, 15.0f, 3, 0.15f};
+
+    // Fodder Barrage (Aims once, then fires a stream)
+    EnemyData fodderBarrage = {20, patBarrage, 2.0f, 20.0f, (Vector2){0, 100}, 0.0f, 1.0f, 15.0f, 20, 0.05f};
 
     // Sweeper (Moves horizontally)
     EnemyData sweeperR = {20, patSpread, 1.0f, 20.0f, (Vector2){100, 10}, 0.0f, 0.5f, 12.0f, 1, 0.0f};
@@ -198,6 +202,13 @@ void Stage1(void)
     }
     t += 5.0f;
 
+    // Wave 7.5: Barrage Enemies (New Pattern Test)
+    for (int i = 0; i < 4; i++) {
+        Spawn((Vector2){150 + i * 100, -20}, fodderBarrage, t);
+        t += 2.0f;
+    }
+    t += 4.0f;
+
     // Wave 8: Finale before boss - Sweeper barrage (2:20 - 2:40)
     for (int i = 0; i < 6; i++) {
         Spawn((Vector2){-20, 40 + i*20}, sweeperR, t);
@@ -245,7 +256,7 @@ void Stage1(void)
     boss.radius = 40.0f;
 
     // Phase 1: Spread and Aim (Bouncing)
-    PatternConfig bossPat1 = {5, 200.0f, PI/2, PI/2, 0.5f, 10, BULLET_LINEAR, 0};
+    PatternConfig bossPat1 = {5, 200.0f, PI/2, PI/2, 0.5f, 10, BULLET_LINEAR, 0, 0.0f, false};
     boss.phases[0] = (SpellCard){
         .timer = 40.0f,
         .internalTimer = 0.0f,
@@ -263,7 +274,7 @@ void Stage1(void)
     };
 
     // Phase 2: Ring bursts and curving (Oscillating)
-    PatternConfig bossPat2 = {16, 150.0f, PI*2, 0, -0.2f, 10, BULLET_CURVING, 0.5f};
+    PatternConfig bossPat2 = {16, 150.0f, PI*2, 0, -0.2f, 10, BULLET_CURVING, 0.5f, 0.0f, false};
     boss.phases[1] = (SpellCard){
         .timer = 40.0f,
         .internalTimer = 0.0f,
@@ -281,7 +292,7 @@ void Stage1(void)
     };
 
     // Phase 3: Freeze/Aim spam (Survival) (Targets Player)
-    PatternConfig bossPat3 = {3, 300.0f, PI/4, PI/2, 1.0f, 10, BULLET_FREEZE, 0};
+    PatternConfig bossPat3 = {3, 300.0f, PI/4, PI/2, 1.0f, 10, BULLET_FREEZE, 0, 0.0f, false};
     boss.phases[2] = (SpellCard){
         .timer = 30.0f,
         .internalTimer = 0.0f,

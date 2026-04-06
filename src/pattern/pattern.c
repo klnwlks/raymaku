@@ -25,6 +25,13 @@ void ExecPattern(Vector2 pos, PatternConfig pat, BulletOwner owner)
     {
         // move their firing angle
         float finalAngle = startAngle + (step * j);
+
+        // Apply jitter
+        if (pat.jitter > 0.0f) {
+            float offset = ((float)GetRandomValue(-1000, 1000) / 1000.0f) * pat.jitter;
+            finalAngle += offset;
+        }
+
         // get vector velocity
         Vector2 velocity = {
             cosf(finalAngle) * pat.speed,
@@ -77,6 +84,11 @@ void SpawnPattern(PatternConfig config, BulletOwner owner, Vector2 pos, int shot
 {
     if (activePatterns >= MAX_PATTERNS) return;
     
+    // If it's an aimed pattern, calculate angle now
+    if (config.aimAtPlayer) {
+        config.angleOffset = AimPlayer(pos);
+    }
+
     patternPool[activePatterns].config = config;
     patternPool[activePatterns].owner = owner;
     patternPool[activePatterns].origin = pos;

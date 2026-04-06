@@ -24,7 +24,7 @@ void InitPlayer()
     player.power = 1;
     
     // Default player pattern: Fast straight bullets shooting UP
-    player.pattern = (PatternConfig){ 1, 800.0f, 0, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+    player.pattern = (PatternConfig){ 1, 800.0f, 0, -PI/2.0f, 0, 1, BULLET_LINEAR, 0, 0.0f, false };
     player.shootTimer = 0.08f;
     player.currentShootTimer = 0.0f;
 }
@@ -80,13 +80,13 @@ void UpdatePlayer()
     {
         // Basic 4-way spread
         float arc = player.focused ? 0.1f : 0.4f;
-        player.pattern = (PatternConfig){ 4, 1000.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+        player.pattern = (PatternConfig){ 4, 1000.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0, 0.0f, false };
     }
     else
     {
         // Advanced 5-way spread (tighter than 4-way when focused)
         float arc = player.focused ? 0.08f : 0.5f;
-        player.pattern = (PatternConfig){ 5, 1200.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0 };
+        player.pattern = (PatternConfig){ 5, 1200.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0, 0.0f, false };
     }
 
     // Shooting logic
@@ -99,7 +99,7 @@ void UpdatePlayer()
         player.invincibilityTimer = 3.0f; // 3 seconds of invincibility during bomb
         
         // Complex big pattern: Multi-volley expanding circle
-        PatternConfig bombPattern = { 32, 400.0f, 2.0f * PI, 0, PI, 10, BULLET_BOMB, 0 };
+        PatternConfig bombPattern = { 32, 400.0f, 2.0f * PI, 0, PI, 10, BULLET_BOMB, 0, 0.0f, false };
         SpawnPattern(bombPattern, BULLET_PLAYER, player.position, 12, 0, 0.15f);
     }
     
@@ -112,7 +112,7 @@ void UpdatePlayer()
         
         // Shoot from active options (Homing bullets)
         // rotationSpeed PI * 4 means it turns 720 degrees per second
-        PatternConfig optPattern = { 1, 800.0f, 0, -PI/2.0f, 0, 1, BULLET_HOMING, PI * 4.0f };
+        PatternConfig optPattern = { 1, 800.0f, 0, -PI/2.0f, 0, 1, BULLET_HOMING, PI * 4.0f, 0.0f, false };
         for (int i = 0; i < player.activeOptions; i++)
         {
             ExecPattern(player.optionPos[i], optPattern, BULLET_PLAYER);
