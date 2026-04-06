@@ -38,6 +38,7 @@ typedef struct {
     float timer;
     float speed;
     float rotationSpeed;
+    bool grazed;
 } Bullet;
 
 // Lifecycle functions

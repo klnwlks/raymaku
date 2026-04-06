@@ -16,6 +16,8 @@ typedef struct {
     int power;
     float radius; // hitbox
     float pickupRadius; // item collection
+    float grazeRadius; // graze
+    int graze; // graze counter
     float invincibilityTimer; // internal timer
     int points;
     float invincibility;

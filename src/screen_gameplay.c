@@ -123,7 +123,10 @@ static void DrawUI(void)
     DrawText("POINTS", uiX, uiY + 310, 20, BLACK);
     DrawText(TextFormat("%d / 200", p->points), uiX, uiY + 335, 20, PINK);
 
-    DrawText("RAYMAKU", uiX, uiY + 390, 40, BLACK);
+    DrawText("GRAZE", uiX, uiY + 370, 20, BLACK);
+    DrawText(TextFormat("%d", p->graze), uiX, uiY + 395, 20, DARKPURPLE);
+
+    DrawText("RAYMAKU", uiX, uiY + 450, 40, BLACK);
 }
 
 // Gameplay Screen Draw logic

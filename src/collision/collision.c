@@ -85,6 +85,17 @@ void ResolveCollisions()
 
     }
 
+    // Graze detection
+    for (int i = 0; i < enemyBulletCount; i++) 
+    {
+        if (!bulletPool[i].grazed && CheckCollisionCircles(bulletPool[i].position, bulletPool[i].radius, player->position, player->grazeRadius))
+        {
+            bulletPool[i].grazed = true;
+            player->graze++;
+            player->points += 50; // Graze gives a small point bonus
+        }
+    }
+
     // then check if player has touched items
     int itemCount;
     Item *itemPool = GetItemPool(&itemCount);

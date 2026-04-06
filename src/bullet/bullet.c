@@ -275,6 +275,7 @@ void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner
         b->state = STATE_ACTIVE;
         b->speed = (speed == 0.0f) ? Vector2Length(vel) : speed;
         b->rotationSpeed = rotationSpeed;
+        b->grazed = false;
     }
 }
 

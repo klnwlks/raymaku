@@ -14,6 +14,7 @@ void InitPlayer()
     player.radius = 3.0f; // Small death hitbox
     player.pickupRadius = 12.0f; // Generous item pickup radius
     player.grazeRadius = player.radius + 9.0f;
+    player.graze = 0;
     player.lives = 3;
     player.bombs = 5;
     player.points = 0;
