@@ -12,6 +12,11 @@ typedef enum SoundEvent {
     SND_MENU_SELECT,
     SND_PLAYER_HIT,
     SND_ENEMY_DIE,
+    SND_ENEMY_SHOOT,
+    SND_BOSS_SHOOT,
+    SND_BOSS_PHASE,
+    SND_BOSS_DEFEAT,
+    SND_GRAZE,
     MAX_SOUND_EVENTS
 } SoundEvent;
 

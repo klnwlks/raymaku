@@ -64,6 +64,7 @@ int main(void)
     // Initialization
     //---------------------------------------------------------
     InitWindow(screenWidth, screenHeight, "raylib game template");
+    SetExitKey(KEY_NULL); // Prevent ESC from closing the game
     SetRandomSeed(time(NULL));
 
 

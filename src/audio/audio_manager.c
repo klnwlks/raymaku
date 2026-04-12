@@ -1,5 +1,4 @@
 #include "audio_manager.h"
-#include <stdio.h>
 
 static Sound soundPool[MAX_SOUND_EVENTS] = { 0 };
 
@@ -8,10 +7,15 @@ static const char* soundPaths[MAX_SOUND_EVENTS] = {
     "resources/shoot.wav",       // SND_SHOOT
     "resources/hit.wav",         // SND_HIT_ENEMY
     "resources/bomb.wav",        // SND_BOMB
-    "resources/coin.wav",        // SND_MENU_MOVE (Using coin as placeholder for move)
-    "resources/coin.wav",        // SND_MENU_SELECT (Using coin as placeholder for select)
+    "resources/move.wav",        // SND_MENU_MOVE
+    "resources/select.wav",      // SND_MENU_SELECT
     "resources/player_hit.wav",  // SND_PLAYER_HIT
-    "resources/enemy_die.wav"    // SND_ENEMY_DIE
+    "resources/enemy_die.wav",   // SND_ENEMY_DIE
+    "resources/enemy_shoot.wav", // SND_ENEMY_SHOOT
+    "resources/boss_shoot.wav",  // SND_BOSS_SHOOT
+    "resources/boss_phase.wav",  // SND_BOSS_PHASE
+    "resources/boss_defeat.wav", // SND_BOSS_DEFEAT
+    "resources/graze.wav"        // SND_GRAZE
 };
 
 void InitAudioSystem(void)
@@ -50,6 +54,7 @@ void PlaySoundEvent(SoundEvent event)
             // Play sound with slight pitch variation for more natural feel
             float pitch = (float)GetRandomValue(95, 105) / 100.0f;
             SetSoundPitch(soundPool[event], pitch);
+            SetSoundVolume(soundPool[event], 0.4f);
             PlaySound(soundPool[event]);
         }
     }

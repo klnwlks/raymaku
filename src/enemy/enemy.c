@@ -39,6 +39,7 @@ void UpdateEnemyPool()
             int shots = enemies[i].volleyShots > 0 ? enemies[i].volleyShots : 1;
             float vDelay = enemies[i].volleyDelay > 0.0f ? enemies[i].volleyDelay : 0.0f;
             SpawnPattern(enemies[i].config, BULLET_ENEMY, enemies[i].position, shots, 0.0f, vDelay); 
+            PlaySoundEvent(SND_ENEMY_SHOOT);
             enemies[i].currentShootTimer = enemies[i].shootTimer;
         }
 

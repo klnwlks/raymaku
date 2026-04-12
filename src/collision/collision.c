@@ -96,6 +96,7 @@ void ResolveCollisions()
             bulletPool[i].grazed = true;
             player->graze++;
             player->points += 50; // Graze gives a small point bonus
+            PlaySoundEvent(SND_GRAZE);
         }
     }
 

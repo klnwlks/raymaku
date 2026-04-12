@@ -5,6 +5,7 @@
 #include "../item/item.h"
 #include "../bullet/bullet.h"
 #include "../config.h"
+#include "../audio/audio_manager.h"
 #include <string.h>
 #include <math.h>
 
@@ -36,6 +37,8 @@ static void NextPhase(void)
     ClearEnemyBullets();
     ClearEnemyPatterns();
 
+    PlaySoundEvent(SND_BOSS_DEFEAT);
+
     currBoss.currPhase++;
     if (currBoss.currPhase >= currBoss.totalPhases)
     {
@@ -45,6 +48,7 @@ static void NextPhase(void)
     
     // Reset position for next phase
     currBoss.pos = currBoss.phases[currBoss.currPhase].startPos;
+    PlaySoundEvent(SND_BOSS_PHASE);
 }
 
 void BossHit(int damage)
@@ -117,6 +121,7 @@ void UpdateBoss(void)
         int shots = current->volleyShots > 0 ? current->volleyShots : 1;
         float vDelay = current->volleyDelay > 0.0f ? current->volleyDelay : 0.0f;
         SpawnPattern(current->pattern, BULLET_ENEMY, currBoss.pos, shots, 0.0f, vDelay);
+        PlaySoundEvent(SND_BOSS_SHOOT);
         current->lastShotTime = current->internalTimer;
     }
     
@@ -147,6 +152,7 @@ void UpdateBoss(void)
             int shots = opt->volleyShots > 0 ? opt->volleyShots : 1;
             float vDelay = opt->volleyDelay > 0.0f ? opt->volleyDelay : 0.0f;
             SpawnPattern(opt->pattern, BULLET_ENEMY, opt->currentPos, shots, 0.0f, vDelay);
+            PlaySoundEvent(SND_BOSS_SHOOT);
             opt->lastShotTime = current->internalTimer;
             
             opt->shotsFired++;
