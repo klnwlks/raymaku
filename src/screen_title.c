@@ -8,6 +8,7 @@
 
 #include "raylib.h"
 #include "screens.h"
+#include "audio/audio_manager.h"
 #include <math.h>
 
 //----------------------------------------------------------------------------------
@@ -69,11 +70,13 @@ void UpdateTitleScreen(void)
     {
         menuSelected++;
         if (menuSelected > 1) menuSelected = 0;
+        PlaySoundEvent(SND_MENU_MOVE);
     }
     else if (IsKeyPressed(KEY_UP))
     {
         menuSelected--;
         if (menuSelected < 0) menuSelected = 1;
+        PlaySoundEvent(SND_MENU_MOVE);
     }
 
     // Press enter or tap to change to GAMEPLAY screen
@@ -82,7 +85,7 @@ void UpdateTitleScreen(void)
         if (menuSelected == 0) finishScreen = 2;   // GAMEPLAY
         else finishScreen = 1;                     // OPTIONS
 
-        PlaySound(fxCoin);
+        PlaySoundEvent(SND_MENU_SELECT);
     }
 }
 

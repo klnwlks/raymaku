@@ -3,6 +3,7 @@
 #include "raymath.h"
 #include "config.h"
 #include "../item/item.h"
+#include "../audio/audio_manager.h"
 
 static Player player = {0};
 
@@ -97,6 +98,7 @@ void UpdatePlayer()
     {
         player.bombs--;
         player.invincibilityTimer = 3.0f; // 3 seconds of invincibility during bomb
+        PlaySoundEvent(SND_BOMB);
         
         // Complex big pattern: Multi-volley expanding circle
         PatternConfig bombPattern = { 32, 400.0f, 2.0f * PI, 0, PI, 10, BULLET_BOMB, 0, 0.0f, false };
@@ -109,6 +111,7 @@ void UpdatePlayer()
     {
         // Shoot from main player
         ExecPattern(player.position, player.pattern, BULLET_PLAYER);
+        PlaySoundEvent(SND_SHOOT);
         
         // Shoot from active options (Homing bullets)
         // rotationSpeed PI * 4 means it turns 720 degrees per second
@@ -158,6 +161,7 @@ void PlayerHit()
     if (player.invincibilityTimer <= 0.0f)
     {
         player.lives--;
+        PlaySoundEvent(SND_PLAYER_HIT);
         
         // Drop some power
         int dropAmount = player.power / 2; // Drop 50%

@@ -8,6 +8,7 @@
 
 #include "raylib.h"
 #include "screens.h"
+#include "audio/audio_manager.h"
 #include <math.h>
 
 //----------------------------------------------------------------------------------
@@ -40,11 +41,13 @@ void UpdateStageSelectScreen(void)
     {
         stageSelected++;
         if (stageSelected >= MAX_STAGES) stageSelected = 0;
+        PlaySoundEvent(SND_MENU_MOVE);
     }
     else if (IsKeyPressed(KEY_UP))
     {
         stageSelected--;
         if (stageSelected < 0) stageSelected = MAX_STAGES - 1;
+        PlaySoundEvent(SND_MENU_MOVE);
     }
 
     // Press enter to select stage
@@ -54,7 +57,7 @@ void UpdateStageSelectScreen(void)
         {
             selectedStage = stageSelected + 1;
             finishScreen = 2;   // GAMEPLAY
-            PlaySound(fxCoin);
+            PlaySoundEvent(SND_MENU_SELECT);
         }
     }
 

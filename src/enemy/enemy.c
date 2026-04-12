@@ -4,6 +4,7 @@
 #include "../score/score.h"
 #include "../item/item.h"
 #include "../player/player.h"
+#include "../audio/audio_manager.h"
 
 #define MAX_ENEMY_COUNT 100
 
@@ -52,6 +53,7 @@ void UpdateEnemyPool()
             if (isDead)
             {
                 AddScore(100);
+                PlaySoundEvent(SND_ENEMY_DIE);
                 // Guaranteed power for all, more for tougher enemies
                 int pointItems = (enemies[i].health <= -50) ? 8 : 2; // Reduced point drops
                 int powerItems = 0;

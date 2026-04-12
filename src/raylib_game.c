@@ -14,6 +14,7 @@
 
 #include "raylib.h"
 #include "screens.h"    // NOTE: Declares global (extern) variables and screens functions
+#include "audio/audio_manager.h"
 #include <time.h>
 
 #if defined(PLATFORM_WEB)
@@ -67,6 +68,7 @@ int main(void)
 
 
     InitAudioDevice();      // Initialize audio device
+    InitAudioSystem();      // Initialize our custom audio system
 
     // Load global data (assets that must be available in all screens, i.e. font)
     font = LoadFont("resources/mecha.png");
@@ -111,6 +113,7 @@ int main(void)
     UnloadFont(font);
     //UnloadMusicStream(music);
     UnloadSound(fxCoin);
+    UnloadAudioSystem();
 
     CloseAudioDevice();     // Close audio context
 

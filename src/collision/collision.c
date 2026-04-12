@@ -4,6 +4,7 @@
 #include "../player/player.h"
 #include "../item/item.h"
 #include "../boss/boss.h"
+#include "../audio/audio_manager.h"
 #include "raylib.h"
 
 void ResolveCollisions()
@@ -45,6 +46,7 @@ void ResolveCollisions()
             if (CheckCollisionCircles(playerPool[i].position, playerPool[i].radius, activeBoss->pos, activeBoss->radius))
             {
                 BossHit(playerPool[i].power);
+                PlaySoundEvent(SND_HIT_ENEMY);
                 RemoveBullet(i, BULLET_PLAYER);
                 playerPool = GetBulletPool(&playerBulletCount, BULLET_PLAYER);
                 i--;
@@ -60,6 +62,7 @@ void ResolveCollisions()
             if (CheckCollisionCircles(playerPool[i].position, playerPool[i].radius, enemyPool[j].position, enemyPool[j].radius)) 
             {
                EnemyHit(j, playerPool[i].power); 
+               PlaySoundEvent(SND_HIT_ENEMY);
                RemoveBullet(i, BULLET_PLAYER);
                playerPool = GetBulletPool(&playerBulletCount, BULLET_PLAYER);
                enemyPool = GetEnemies(&enemyCount); // enemy status might change
