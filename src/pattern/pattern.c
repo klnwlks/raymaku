@@ -2,6 +2,7 @@
 #include "raymath.h"
 #include "../bullet/bullet.h"
 #include "../player/player.h"
+#include "../audio/audio_manager.h"
 #include <math.h>
 
 #define MAX_PATTERNS 64
@@ -39,7 +40,11 @@ void ExecPattern(Vector2 pos, PatternConfig pat, BulletOwner owner)
         };
       
         // spawn the bullet
-        SpawnBullet(pos, velocity, (Vector2){0,0}, pat.power, owner, pat.behavior, pat.speed, pat.rotationSpeed);
+        SpawnBullet(pos, velocity, (Vector2){0,0}, pat.power, owner, pat.behavior, pat.speed, pat.rotationSpeed, pat.bulletRadius);
+        
+        if (owner == BULLET_ENEMY) {
+            PlaySoundEvent(SND_ENEMY_SHOOT);
+        }
     }
 }
 

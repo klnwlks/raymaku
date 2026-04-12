@@ -25,7 +25,7 @@ void InitPlayer()
     player.power = 1;
     
     // Default player pattern: Fast straight bullets shooting UP
-    player.pattern = (PatternConfig){ 1, 800.0f, 0, -PI/2.0f, 0, 1, BULLET_LINEAR, 0, 0.0f, false };
+    player.pattern = (PatternConfig){ .bulletCount = 1, .speed = 800.0f, .arc = 0, .angleOffset = -PI/2.0f, .spin = 0, .power = 1, .behavior = BULLET_LINEAR, .rotationSpeed = 0, .jitter = 0.0f, .aimAtPlayer = false, .bulletRadius = 0 };
     player.shootTimer = 0.08f;
     player.currentShootTimer = 0.0f;
 }
@@ -81,13 +81,13 @@ void UpdatePlayer()
     {
         // Basic 4-way spread
         float arc = player.focused ? 0.1f : 0.4f;
-        player.pattern = (PatternConfig){ 4, 1000.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0, 0.0f, false };
+        player.pattern = (PatternConfig){ .bulletCount = 4, .speed = 1000.0f, .arc = arc, .angleOffset = -PI/2.0f, .spin = 0, .power = 2, .behavior = BULLET_LINEAR, .rotationSpeed = 0, .jitter = 0.0f, .aimAtPlayer = false, .bulletRadius = 0 };
     }
     else
     {
         // Advanced 5-way spread (tighter than 4-way when focused)
         float arc = player.focused ? 0.08f : 0.5f;
-        player.pattern = (PatternConfig){ 5, 1200.0f, arc, -PI/2.0f, 0, 1, BULLET_LINEAR, 0, 0.0f, false };
+        player.pattern = (PatternConfig){ .bulletCount = 5, .speed = 1200.0f, .arc = arc, .angleOffset = -PI/2.0f, .spin = 0, .power = 2, .behavior = BULLET_LINEAR, .rotationSpeed = 0, .jitter = 0.0f, .aimAtPlayer = false, .bulletRadius = 0 };
     }
 
     // Shooting logic
@@ -101,7 +101,7 @@ void UpdatePlayer()
         PlaySoundEvent(SND_BOMB);
         
         // Complex big pattern: Multi-volley expanding circle
-        PatternConfig bombPattern = { 32, 400.0f, 2.0f * PI, 0, PI, 10, BULLET_BOMB, 0, 0.0f, false };
+        PatternConfig bombPattern = { .bulletCount = 32, .speed = 400.0f, .arc = 2.0f * PI, .angleOffset = 0, .spin = PI, .power = 10, .behavior = BULLET_BOMB, .rotationSpeed = 0, .jitter = 0.0f, .aimAtPlayer = false, .bulletRadius = 0 };
         SpawnPattern(bombPattern, BULLET_PLAYER, player.position, 12, 0, 0.15f);
     }
     
@@ -115,7 +115,7 @@ void UpdatePlayer()
         
         // Shoot from active options (Homing bullets)
         // rotationSpeed PI * 4 means it turns 720 degrees per second
-        PatternConfig optPattern = { 1, 800.0f, 0, -PI/2.0f, 0, 1, BULLET_HOMING, PI * 4.0f, 0.0f, false };
+        PatternConfig optPattern = { .bulletCount = 1, .speed = 800.0f, .arc = 0, .angleOffset = -PI/2.0f, .spin = 0, .power = 2, .behavior = BULLET_HOMING, .rotationSpeed = PI * 4.0f, .jitter = 0.0f, .aimAtPlayer = false, .bulletRadius = 0 };
         for (int i = 0; i < player.activeOptions; i++)
         {
             ExecPattern(player.optionPos[i], optPattern, BULLET_PLAYER);

@@ -21,7 +21,14 @@ void UpdateEnemyPool()
     float dt = GetFrameTime();
     for (int i = 0; i < enemyCount; i++)
     {
-         // update position of enemies
+         // update velocity and position
+        enemies[i].velocity.x += enemies[i].acceleration.x * dt;
+        enemies[i].velocity.y += enemies[i].acceleration.y * dt;
+        
+        // apply drag (friction)
+        enemies[i].velocity.x *= (1.0f - enemies[i].drag * dt);
+        enemies[i].velocity.y *= (1.0f - enemies[i].drag * dt);
+
         enemies[i].velocity = Vector2Rotate(enemies[i].velocity, enemies[i].angularVelocity * dt); 
         enemies[i].position.x += enemies[i].velocity.x * dt;
         enemies[i].position.y += enemies[i].velocity.y * dt;
@@ -39,7 +46,6 @@ void UpdateEnemyPool()
             int shots = enemies[i].volleyShots > 0 ? enemies[i].volleyShots : 1;
             float vDelay = enemies[i].volleyDelay > 0.0f ? enemies[i].volleyDelay : 0.0f;
             SpawnPattern(enemies[i].config, BULLET_ENEMY, enemies[i].position, shots, 0.0f, vDelay); 
-            PlaySoundEvent(SND_ENEMY_SHOOT);
             enemies[i].currentShootTimer = enemies[i].shootTimer;
         }
 
@@ -61,12 +67,12 @@ void UpdateEnemyPool()
                 
                 if (enemies[i].health <= -10) 
                 {
-                    powerItems = 2; // Elite/Tank
+                    powerItems = 4; // Elite/Tank
                 }
                 else 
                 {
                     // Fodder: 40% chance for 1 power item
-                    if (GetRandomValue(0, 10) > 6) powerItems = 1;
+                    if (GetRandomValue(0, 10) > 3) powerItems = 1;
                 }
                 
                 SpawnItems(pointItems, ITEM_POINT, enemies[i].position, 50);
@@ -94,17 +100,20 @@ void DrawEnemyPool()
     }
 }
 
-void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity, float lifeTime, int volleyShots, float volleyDelay)
+void SpawnEnemy(Vector2 pos, Vector2 vel, Vector2 acceleration, float drag, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity, float lifeTime, int volleyShots, float volleyDelay)
 {
     if (enemyCount < MAX_ENEMY_COUNT)
     {
         enemies[enemyCount].position = pos;
         enemies[enemyCount].velocity = vel;
+        enemies[enemyCount].acceleration = acceleration;
+        enemies[enemyCount].drag = drag;
         enemies[enemyCount].health = health;
         enemies[enemyCount].shootTimer = shootTimer;
         enemies[enemyCount].config = pattern;
         enemies[enemyCount].radius = radius;
-        enemies[enemyCount].currentShootTimer = shootTimer;
+        // Start with a short staggered delay so they shoot soon after entering
+        enemies[enemyCount].currentShootTimer = 0.5f + (float)GetRandomValue(0, 50) / 100.0f;
         enemies[enemyCount].angularVelocity = angularVelocity;
         enemies[enemyCount].lifeTime = lifeTime;
         enemies[enemyCount].currentLifeTime = lifeTime;

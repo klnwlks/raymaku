@@ -8,6 +8,8 @@
 typedef struct {
     Vector2 position;
     Vector2 velocity;
+    Vector2 acceleration;
+    float drag;
     int health;
     PatternConfig config;
     float shootTimer; // delay between shots 
@@ -29,6 +31,8 @@ typedef struct {
     float shootTimer; // delay between shots 
     float radius;
     Vector2 vel; // velocity
+    Vector2 acceleration;
+    float drag;
     float angularVelocity; // radian rotation applied to velocity vector
     float currentShootTimer;
     float lifeTime;
@@ -40,7 +44,7 @@ typedef struct {
 void InitEnemyPool(void);
 void UpdateEnemyPool(void);
 void DrawEnemyPool(void);
-void SpawnEnemy(Vector2 pos, Vector2 vel, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity, float lifeTime, int volleyShots, float volleyDelay);
+void SpawnEnemy(Vector2 pos, Vector2 vel, Vector2 acceleration, float drag, int health, PatternConfig pattern, float shootTimer, float radius, float angularVelocity, float lifeTime, int volleyShots, float volleyDelay);
 Enemy *GetEnemies(int* count);
 void EnemyHit(int index, int power);
 float GetAngleToPlayer(Vector2 pos);

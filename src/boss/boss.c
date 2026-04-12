@@ -201,6 +201,11 @@ void DrawBoss(void)
     
     DrawRectangle(PLAY_AREA_X_OFFSET, 10, (PLAY_AREA_WIDTH) * ratio, 10, RED);
     DrawText(current->name, PLAY_AREA_X_OFFSET, 25, 20, RAYWHITE);
+    
+    // Draw Numeric Timer
+    int secondsLeft = (int)(current->timer - current->internalTimer);
+    if (secondsLeft < 0) secondsLeft = 0;
+    DrawText(TextFormat("%02d", secondsLeft), PLAY_AREA_X_OFFSET + PLAY_AREA_WIDTH - 40, 25, 30, (secondsLeft <= 5) ? RED : RAYWHITE);
 }
 
 Boss *GetActiveBoss(void)

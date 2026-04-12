@@ -231,7 +231,7 @@ void DrawBulletPools(void)
     }
 }
 
-void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner owner, BulletBehavior behavior, float speed, float rotationSpeed)
+void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner owner, BulletBehavior behavior, float speed, float rotationSpeed, float radius)
 {
     Bullet *b = NULL;
     
@@ -257,7 +257,10 @@ void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner
         b->position = pos;
         b->velocity = vel;
         b->acceleration = accel;
-        b->radius = (owner == BULLET_PLAYER) ? 4.0f : 6.0f;
+        
+        // Use provided radius or default if 0
+        if (radius > 0) b->radius = radius;
+        else b->radius = (owner == BULLET_PLAYER) ? 4.0f : 6.0f;
         
         if (behavior == BULLET_BOMB)
         {

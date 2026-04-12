@@ -15,6 +15,7 @@ typedef struct {
     float rotationSpeed;
     float jitter;       // Random angle offset in radians
     bool aimAtPlayer;   // If true, re-calculate angleOffset towards player when spawned
+    float bulletRadius; // Override bullet radius if > 0
 } PatternConfig;
 
 // for multivolley
