@@ -3,6 +3,7 @@
 #include "../player/player.h"
 #include "../score/score.h"
 #include "../item/item.h"
+#include "../bullet/bullet.h"
 #include "../config.h"
 #include <string.h>
 #include <math.h>
@@ -30,6 +31,10 @@ static void NextPhase(void)
     AddScore(1000);
     SpawnItems(15, ITEM_POINT, currBoss.pos, 100);
     SpawnItems(5, ITEM_POWER, currBoss.pos, 1);
+    
+    // Clear bullets on phase transition
+    ClearEnemyBullets();
+    ClearEnemyPatterns();
 
     currBoss.currPhase++;
     if (currBoss.currPhase >= currBoss.totalPhases)

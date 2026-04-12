@@ -50,5 +50,6 @@ void DrawBulletPools(void);
 void SpawnBullet(Vector2 pos, Vector2 vel, Vector2 accel, int power, BulletOwner owner, BulletBehavior behavior, float speed, float rotationSpeed);
 Bullet *GetBulletPool(int *count, BulletOwner owner);
 void RemoveBullet(int index, BulletOwner owner);
+void ClearEnemyBullets(void);
 
 #endif

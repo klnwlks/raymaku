@@ -97,3 +97,17 @@ void SpawnPattern(PatternConfig config, BulletOwner owner, Vector2 pos, int shot
     patternPool[activePatterns].shotDelay = shotDelay;
     activePatterns++;
 }
+
+void ClearEnemyPatterns(void)
+{
+    for (int i = 0; i < activePatterns; i++)
+    {
+        if (patternPool[i].owner == BULLET_ENEMY)
+        {
+            // Swap with last active and decrement
+            patternPool[i] = patternPool[activePatterns - 1];
+            activePatterns--;
+            i--; // Re-process this index
+        }
+    }
+}

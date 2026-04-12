@@ -294,6 +294,11 @@ void RemoveBullet(int index, BulletOwner owner)
 }
 
 
+void ClearEnemyBullets(void)
+{
+    enemyBulletCount = 0;
+}
+
 Bullet *GetBulletPool(int *count, BulletOwner owner) {
     if (owner == BULLET_ENEMY) 
     {
