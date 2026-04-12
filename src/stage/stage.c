@@ -108,7 +108,6 @@ void Stage1(void)
     PatternConfig patSpiral = { .bulletCount = 8, .speed = 180.0f, .arc = PI*2, .angleOffset = 0, .spin = 0.5f, .power = 10, .behavior = BULLET_CURVING, .rotationSpeed = 0.4f, .jitter = 0, .aimAtPlayer = false, .bulletRadius = 10.0f }; // Large bullets for tanks
     PatternConfig patFreeze = { .bulletCount = 12, .speed = 200.0f, .arc = PI*2, .angleOffset = 0, .spin = 0, .power = 10, .behavior = BULLET_FREEZE, .rotationSpeed = 0, .jitter = 0, .aimAtPlayer = false, .bulletRadius = 8.0f }; // Large bullets for tanks
 
-
     // --- ENEMY DATA ARCHETYPES ---
     EnemyData lingerer = {
         .health = 40, .radius = 20.0f,
@@ -119,14 +118,14 @@ void Stage1(void)
 
     EnemyData sweeperR = {
         .health = 30, .radius = 18.0f,
-        .config = patAimedSpread, .shootTimer = 1.5f, .volleyShots = 6, .volleyDelay = 0.12f,
-        .vel = {-200, 30}, .acceleration = {0, 10}, .drag = 0.1f,
+        .config = patAimedSpread, .shootTimer = 3.0f, .volleyShots = 4, .volleyDelay = 0.15f,
+        .vel = {-120, 20}, .acceleration = {0, 10}, .drag = 0.1f,
         .lifeTime = 20.0f
     };
     EnemyData sweeperL = {
         .health = 30, .radius = 18.0f,
-        .config = patAimedSpread, .shootTimer = 1.5f, .volleyShots = 6, .volleyDelay = 0.12f,
-        .vel = {200, 30}, .acceleration = {0, 10}, .drag = 0.1f,
+        .config = patAimedSpread, .shootTimer = 3.0f, .volleyShots = 4, .volleyDelay = 0.15f,
+        .vel = {120, 20}, .acceleration = {0, 10}, .drag = 0.1f,
         .lifeTime = 20.0f
     };
 
@@ -195,17 +194,17 @@ void Stage1(void)
         t += 2.5f; 
     }
 
-    // --- 2:30: MIDBOSS: SENTRY UNIT MK-I ---
+    // --- 2:30: MIDBOSS ---
     t = 150.0f;
     Boss midboss = {0};
-    midboss.name = "Sentry Unit MK-I";
+    midboss.name = "Midboss";
     midboss.totalPhases = 3;
     midboss.radius = 45.0f;
     midboss.active = true;
 
     // Phase 1: Data Stream
     midboss.phases[0] = (SpellCard){
-        .name = "Data Stream: Sequential Feed",
+        .name = "Midboss Spell 1",
         .timer = 25.0f, .health = 1500, .maxHealth = 1500,
         .startPos = (Vector2){400, 150}, .moveMode = BOSS_MOVE_OSCILLATE,
         .pattern = (PatternConfig){ .bulletCount = 3, .speed = 220.0f, .arc = PI/4, .angleOffset = PI/2, .spin = 0, .power = 10, .behavior = BULLET_LINEAR, .rotationSpeed = 0, .jitter = 0, .aimAtPlayer = false, .bulletRadius = 12.0f },
@@ -219,7 +218,7 @@ void Stage1(void)
     };
 
     midboss.phases[1] = (SpellCard){
-        .name = "Recursive Loop: Buffer Stack",
+        .name = "Midboss Spell 2",
         .timer = 30.0f, .health = 2000, .maxHealth = 2000,
         .startPos = (Vector2){400, 200}, .moveMode = BOSS_MOVE_STATIC,
         .pattern = (PatternConfig){ .bulletCount = 20, .speed = 240.0f, .arc = PI*2, .angleOffset = 0, .spin = 0.5f, .power = 10, .behavior = BULLET_FREEZE, .rotationSpeed = 0, .jitter = 0, .aimAtPlayer = false, .bulletRadius = 10.0f },
@@ -227,7 +226,7 @@ void Stage1(void)
     };
 
     midboss.phases[2] = (SpellCard){
-        .name = "Buffer Overflow: Memory Leak",
+        .name = "Midboss Spell 3",
         .timer = 20.0f, .health = 2500, .maxHealth = 2500,
         .startPos = (Vector2){400, 150}, .moveMode = BOSS_MOVE_BOUNCE,
         .pattern = (PatternConfig){ .bulletCount = 11, .speed = 280.0f, .arc = PI/1.5f, .angleOffset = PI/2, .spin = 0, .power = 10, .behavior = BULLET_LINEAR, .rotationSpeed = 0, .jitter = 0.2f, .aimAtPlayer = false, .bulletRadius = 8.0f },
@@ -249,13 +248,14 @@ void Stage1(void)
     // --- 5:00: FINAL BOSS ---
     t = 300.0f;
     Boss boss = {0};
-    boss.name = "Sentry Unit MK-II: Overclocked";
+    boss.name = "Boss";
     boss.totalPhases = 4;
     boss.radius = 50.0f;
     boss.active = true;
 
+    // Phase 1: Hyper-Data Stream
     boss.phases[0] = (SpellCard){
-        .name = "Hyper-Data Stream: Overclocked Input",
+        .name = "Boss Spell 1",
         .timer = 30.0f, .health = 3500, .maxHealth = 3500,
         .startPos = (Vector2){400, 150}, .moveMode = BOSS_MOVE_OSCILLATE,
         .pattern = (PatternConfig){ .bulletCount = 7, .speed = 280.0f, .arc = PI/2.5f, .angleOffset = PI/2, .spin = 0.3f, .power = 10, .behavior = BULLET_LINEAR, .rotationSpeed = 0, .jitter = 0.05f, .aimAtPlayer = false, .bulletRadius = 14.0f },
@@ -268,24 +268,27 @@ void Stage1(void)
         }
     };
 
+    // Phase 2: Recursive Loop EX
     boss.phases[1] = (SpellCard){
-        .name = "Recursive Loop EX: Overflow Stack",
+        .name = "Boss Spell 2",
         .timer = 35.0f, .health = 4000, .maxHealth = 4000,
         .startPos = (Vector2){400, 200}, .moveMode = BOSS_MOVE_STATIC,
         .pattern = (PatternConfig){ .bulletCount = 32, .speed = 260.0f, .arc = PI*2, .angleOffset = 0, .spin = 0.8f, .power = 10, .behavior = BULLET_FREEZE, .rotationSpeed = 0, .jitter = 0, .aimAtPlayer = false, .bulletRadius = 12.0f },
         .shootDelay = 4.0f, .volleyShots = 25, .volleyDelay = 0.12f
     };
 
+    // Phase 3: Buffer Overflow: Critical
     boss.phases[2] = (SpellCard){
-        .name = "Buffer Overflow: Critical Exception",
+        .name = "Boss Spell 3",
         .timer = 30.0f, .health = 5000, .maxHealth = 5000,
         .startPos = (Vector2){400, 150}, .moveMode = BOSS_MOVE_BOUNCE,
         .pattern = (PatternConfig){ .bulletCount = 15, .speed = 350.0f, .arc = PI/1.2f, .angleOffset = PI/2, .spin = 0, .power = 10, .behavior = BULLET_CURVING, .rotationSpeed = 0.8f, .jitter = 0.3f, .aimAtPlayer = false, .bulletRadius = 10.0f },
         .shootDelay = 1.2f, .volleyShots = 50, .volleyDelay = 0.03f
     };
 
+    // Phase 4: System Shutdown (Survival)
     boss.phases[3] = (SpellCard){
-        .name = "System Shutdown: Total Memory Wipe",
+        .name = "Boss Spell 4 (Survival)",
         .timer = 35.0f, .isSurvival = true,
         .startPos = (Vector2){400, 300}, .moveMode = BOSS_MOVE_TARGET_PLAYER,
         .pattern = (PatternConfig){ .bulletCount = 128, .speed = 180.0f, .arc = PI*2, .angleOffset = 0, .spin = 0.15f, .power = 10, .behavior = BULLET_LINEAR, .rotationSpeed = 0, .jitter = 0, .aimAtPlayer = false, .bulletRadius = 16.0f },
