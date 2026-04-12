@@ -63,8 +63,13 @@ void InitGameplayScreen(void)
     InitBoss();
     InitBulletPools();
     
-    // Start Stage 1
-    Stage1();
+    // Start selected stage
+    switch (selectedStage)
+    {
+        case 1: Stage1(); break;
+        // case 2: Stage2(); break; // TODO: Add more stages
+        default: Stage1(); break;
+    }
 }
 
 // Gameplay Screen Update logic

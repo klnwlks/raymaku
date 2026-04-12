@@ -29,6 +29,7 @@ GameScreen currentScreen = TITLE;
 Font font = { 0 };
 Music music = { 0 };
 Sound fxCoin = { 0 };
+int selectedStage = 1;
 
 //----------------------------------------------------------------------------------
 // Global Variables Definition (local to this module)
@@ -100,6 +101,7 @@ int main(void)
         case LOGO: UnloadLogoScreen(); break;
         case TITLE: UnloadTitleScreen(); break;
         case OPTIONS: UnloadOptionsScreen(); break;
+        case STAGE_SELECT: UnloadStageSelectScreen(); break;
         case GAMEPLAY: UnloadGameplayScreen(); break;
         case ENDING: UnloadEndingScreen(); break;
         default: break;
@@ -107,7 +109,7 @@ int main(void)
 
     // Unload global data loaded
     UnloadFont(font);
-    UnloadMusicStream(music);
+    //UnloadMusicStream(music);
     UnloadSound(fxCoin);
 
     CloseAudioDevice();     // Close audio context
@@ -130,6 +132,7 @@ static void ChangeToScreen(int screen)
         case LOGO: UnloadLogoScreen(); break;
         case TITLE: UnloadTitleScreen(); break;
         case OPTIONS: UnloadOptionsScreen(); break;
+        case STAGE_SELECT: UnloadStageSelectScreen(); break;
         case GAMEPLAY: UnloadGameplayScreen(); break;
         case ENDING: UnloadEndingScreen(); break;
         default: break;
@@ -141,6 +144,7 @@ static void ChangeToScreen(int screen)
         case LOGO: InitLogoScreen(); break;
         case TITLE: InitTitleScreen(); break;
         case OPTIONS: InitOptionsScreen(); break;
+        case STAGE_SELECT: InitStageSelectScreen(); break;
         case GAMEPLAY: InitGameplayScreen(); break;
         case ENDING: InitEndingScreen(); break;
         default: break;
@@ -178,6 +182,7 @@ static void UpdateTransition(void)
                 case LOGO: UnloadLogoScreen(); break;
                 case TITLE: UnloadTitleScreen(); break;
                 case OPTIONS: UnloadOptionsScreen(); break;
+                case STAGE_SELECT: UnloadStageSelectScreen(); break;
                 case GAMEPLAY: UnloadGameplayScreen(); break;
                 case ENDING: UnloadEndingScreen(); break;
                 default: break;
@@ -189,6 +194,7 @@ static void UpdateTransition(void)
                 case LOGO: InitLogoScreen(); break;
                 case TITLE: InitTitleScreen(); break;
                 case OPTIONS: InitOptionsScreen(); break;
+                case STAGE_SELECT: InitStageSelectScreen(); break;
                 case GAMEPLAY: InitGameplayScreen(); break;
                 case ENDING: InitEndingScreen(); break;
                 default: break;
@@ -244,7 +250,7 @@ static void UpdateDrawFrame(void)
                 UpdateTitleScreen();
 
                 if (FinishTitleScreen() == 1) TransitionToScreen(OPTIONS);
-                else if (FinishTitleScreen() == 2) TransitionToScreen(GAMEPLAY);
+                else if (FinishTitleScreen() == 2) TransitionToScreen(STAGE_SELECT);
 
             } break;
             case OPTIONS:
@@ -253,6 +259,13 @@ static void UpdateDrawFrame(void)
 
                 if (FinishOptionsScreen()) TransitionToScreen(TITLE);
 
+            } break;
+            case STAGE_SELECT:
+            {
+                UpdateStageSelectScreen();
+
+                if (FinishStageSelectScreen() == 1) TransitionToScreen(TITLE);
+                else if (FinishStageSelectScreen() == 2) TransitionToScreen(GAMEPLAY);
             } break;
             case GAMEPLAY:
             {
@@ -286,6 +299,7 @@ static void UpdateDrawFrame(void)
             case LOGO: DrawLogoScreen(); break;
             case TITLE: DrawTitleScreen(); break;
             case OPTIONS: DrawOptionsScreen(); break;
+            case STAGE_SELECT: DrawStageSelectScreen(); break;
             case GAMEPLAY: DrawGameplayScreen(); break;
             case ENDING: DrawEndingScreen(); break;
             default: break;
